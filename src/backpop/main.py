@@ -292,9 +292,18 @@ class BackPop():
         phase_table = add_vsys_from_kicks(bcm if self.config["use_bcm"] else bpp, kick_info)
         out = select_phase(phase_table, condition=self.config["phase_condition"])
 
+        # check for MRR
+        obs_out = out[self.obs["out_name"]]
+
+        if obs_out["mass_1"].iloc[0] < obs_out["mass_2"].iloc[0]:
+            m1_col = obs_out.pop("mass_2")
+            m2_col = obs_out.pop("mass_1")
+            obs_out.insert(0, "mass_1", m1_col)
+            obs_out.insert(1, "mass_2", m2_col)
+
         if len(out) > 0:
             # print(f'Found a binary that meets the phase condition! m1={m1:1.2f}, m2={m2:1.2f}, tb={tb:1.2f}, e={e:1.2f}, tphysf={tphysf:1.2f}, vsys_2_total ={out["vsys_2_total"].iloc[0]:1.2f}, teff_2 = {out["teff_2"].iloc[0]:1.2f}, log_lum_2 = {np.log10(out["lum_2"].iloc[0]):1.2f}')
-            return out[self.obs["out_name"]].iloc[0].to_numpy(), bpp.to_numpy(), kick_info.to_numpy(), out.iloc[0].to_numpy() if self.config["use_bcm"] else np.zeros(len(bcm_columns) + 2)
+            return obs_out.iloc[0].to_numpy(), bpp.to_numpy(), kick_info.to_numpy(), out.iloc[0].to_numpy() if self.config["use_bcm"] else np.zeros(len(bcm_columns) + 2)
         else:
             return None, None, None
 
