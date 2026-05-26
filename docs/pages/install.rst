@@ -42,3 +42,23 @@ And that's it! To confirm that everything has installed correctly you can run th
     python -c "import backpop; print(backpop.__version__)"
 
 If you see the version number printed out without any errors, then you're all set to start using ``BackPop``! For more information on getting started, check out the Quickstart page.
+
+Installing from source with GitHub
+----------------------------------
+
+If you wish to install BackPop from source, you can clone the repository from GitHub and install it locally using pip. If you decide to go this route, we recommend `creating your own fork <https://github.com/backpop/backpop/fork>`_ of the repository to keep your development work separate from the main repository.
+
+Once you have your own fork, you can clone it as:
+
+.. code-block:: bash
+
+    git clone /link/to/your/forked/repo
+
+Once cloned, navigate to the BackPop directory and install it using pip:
+
+.. code-block:: bash
+
+    cd backpop
+    pip install .
+
+Now that BackPop is installed, you can model binaries as described in the :ref:`tutorials` page.
