@@ -211,5 +211,6 @@ data/**
 
 # docs
 docs/_generated/*
-docs/example_inis/simple_SSE_output/*
 docs/pages/fort.99
+example_inis/simple_SSE_output/*
+
