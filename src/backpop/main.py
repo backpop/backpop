@@ -85,9 +85,11 @@ class BackPop():
             filepath = os.path.join(self.config["output_folder"], 'samples_out.hdf5')
         else:
             output_path = os.path.join(os.getcwd(), 'output_folder')
-            os.mkdir(output_path)
-            if self.config["verbose"]:
-                print(f"Created output folder here: {output_path}")
+            # check if output folder exists, if not create it
+            if not os.path.exists(output_path):
+                os.mkdir(output_path)
+                if self.config["verbose"]:
+                    print(f"Created output folder here: {output_path}")
             filepath = os.path.join(output_path, 'samples_out.hdf5')
             
         self.sampler = Sampler(
@@ -262,19 +264,17 @@ class BackPop():
         zpars = np.zeros(20)
         dtp = 0.0
         tphys = 0.0
-        bkick = np.zeros(20)
-        kick_info = np.zeros((2, 18))
+        kick_info = np.zeros((2, 19))
 
         # run COSMIC!
-        [zpars, bpp_index, bcm_index, kick_info_arrays] = _evolvebin.evolv2(p["kstar"], p["mass"], tb, e,
+        [zpars, kick_info_arrays, bpp_index, bcm_index] = _evolvebin.evolv2(p["kstar"], p["mass"], tb, e,
                                                                      metallicity, tphysf, dtp, p["mass0"],
                                                                      p["rad"], p["lumin"], p["massc"],
                                                                      p["radc"], p["menv"], p["renv"],
                                                                      p["ospin"], p["B_0"], p["bacc"],
                                                                      p["tacc"], p["epoch"], p["tms"],
-                                                                     p["bhspin"], tphys, zpars,
-                                                                     bkick, kick_info)
-        
+                                                                     p["bhspin"], tphys, zpars, kick_info)
+
         if bpp_index < 0:
             raise ValueError("Failed in METISSE_zcnsts")
         else:
@@ -285,30 +285,35 @@ class BackPop():
             _evolvebin.binary.bcm[:bcm_index, :n_col_bcm] = np.zeros((bcm_index, n_col_bcm))
             # print(bpp.shape)
 
-            bpp = pd.DataFrame(bpp, columns=bpp_columns) 
-            bcm = pd.DataFrame(bcm, columns=bcm_columns)
+            bpp = pd.DataFrame(bpp,
+                            columns=bpp_columns,
+                            index=bpp[:, -1].astype(int))
 
+            bcm = pd.DataFrame(bcm,
+                            columns=bcm_columns,
+                            index=bcm[:, -1].astype(int))
+            
             kick_info = pd.DataFrame(kick_info_arrays,
-                                    columns=KICK_COLUMNS,
-                                    index=kick_info_arrays[:, -1].astype(int))
+                                 columns=KICK_COLUMNS,
+                                 index=kick_info_arrays[:, -1].astype(int))
             
             phase_table = add_vsys_from_kicks(bcm if self.config["use_bcm"] else bpp, kick_info)
             out = select_phase(phase_table, condition=self.config["phase_condition"])
 
             if len(out) > 0:
 
-                # check for MRR
-                obs_out = out[self.obs["out_name"]]
+                # check for MRR for DCO - phase select
+                # obs_out = out[self.obs["out_name"]]
 
-                if obs_out["mass_1"].iloc[0] < obs_out["mass_2"].iloc[0]:
-                    m1_col = obs_out.pop("mass_2")
-                    m2_col = obs_out.pop("mass_1")
-                    obs_out.insert(0, "mass_1", m1_col)
-                    obs_out.insert(1, "mass_2", m2_col)
+                # if obs_out["mass_1"].iloc[0] < obs_out["mass_2"].iloc[0]:
+                #     m1_col = obs_out.pop("mass_2")
+                #     m2_col = obs_out.pop("mass_1")
+                #     obs_out.insert(0, "mass_1", m1_col)
+                #     obs_out.insert(1, "mass_2", m2_col)
 
                 # print(f'Found a binary that meets the phase condition! m1={m1:1.2f}, m2={m2:1.2f}, tb={tb:1.2f}, e={e:1.2f}, tphysf={tphysf:1.2f}, vsys_2_total ={out["vsys_2_total"].iloc[0]:1.2f}, teff_2 = {out["teff_2"].iloc[0]:1.2f}, log_lum_2 = {np.log10(out["lum_2"].iloc[0]):1.2f}')
                 
-                return obs_out.iloc[0].to_numpy(), bpp.to_numpy(), kick_info.to_numpy(), out.iloc[0].to_numpy() if self.config["use_bcm"] else np.zeros(len(bcm_columns) + 2)
+                return out[self.obs["out_name"]].iloc[0].to_numpy(), bpp.to_numpy(), kick_info.to_numpy(), out.iloc[0].to_numpy() if self.config["use_bcm"] else np.zeros(len(bcm_columns) + 2)
             
             else:
                 return None, None, None

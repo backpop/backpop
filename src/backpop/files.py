@@ -90,7 +90,10 @@ def parse_inifile(ini_file):
 
         SSEDict = config_dict["sse"]
         for k, v in SSEDict.items():
-            SSEDict[k] = v
+            if k == 'z_accuracy_limit':
+                SSEDict[k] = float(v)
+            else:
+                SSEDict[k] = v
     else:
         SSEDict = {'stellar_engine': 'sse'}
 
@@ -128,11 +131,11 @@ def parse_inifile(ini_file):
             fixed[fixed_name] = float(config_dict[k]["value"].strip())
 
     # enforce m1 > m2 COSMIC convention
-    if "m1" and "m2" in obs["name"]:
-        if float(config_dict["backpop.obs::m1"]["mean"].strip()) < float(config_dict["backpop.obs::m2"]["mean"].strip()):
-            raise ValueError('m1 must be > m2 by convention. '
-                            'Your observational means are '
-                            f'm1 = {config_dict["backpop.obs::m1"]["mean"]} and m2 = {config_dict["backpop.obs::m2"]["mean"]}.')
+    # if "m1" and "m2" in obs["name"]:
+    #     if float(config_dict["backpop.obs::m1"]["mean"].strip()) < float(config_dict["backpop.obs::m2"]["mean"].strip()):
+    #         raise ValueError('m1 must be > m2 by convention. '
+    #                         'Your observational means are '
+    #                         f'm1 = {config_dict["backpop.obs::m1"]["mean"]} and m2 = {config_dict["backpop.obs::m2"]["mean"]}.')
     
     if config["bpp_columns"] != "" and config["bpp_columns"].lower() != "none":
         config["bpp_columns"] = ast.literal_eval(config["bpp_columns"])
