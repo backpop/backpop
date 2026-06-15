@@ -208,3 +208,8 @@ __marimo__/
 
 data/**
 !data/README.md
+
+.DS_Store
+docs/_generated/
+docs/pages/fort.99
+example_inis/simple_SSE_output/
