@@ -375,7 +375,10 @@ class BackPop():
             for k in GROUPED_SETTINGS[g]:
                 if k not in self.flags:
                     raise ValueError(f"flag {k} not found in flags dictionary")
-                setattr(getattr(_evolvebin, g), k, self.flags[k])
+                if k == "randomseed":
+                    setattr(getattr(_evolvebin, g), "idum1", self.flags[k])
+                else:
+                    setattr(getattr(_evolvebin, g), k.lower(), self.flags[k])
         return None
     
     def set_SSEDict_flags(self):
