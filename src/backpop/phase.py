@@ -321,7 +321,7 @@ def select_phase(bpp, condition):
     
     Parameters
     ----------
-    bpp : ~pandas.DataFrame
+    bpp : :class:`~pandas.DataFrame`
         DataFrame of the BPP array from COSMIC
     condition : str or ConditionGroup or Condition, optional
         The condition by which to select the phase. This can be a pre-defined phase name (one of

@@ -13,6 +13,7 @@ BackPop
       ~BackPop.evolv2
       ~BackPop.likelihood
       ~BackPop.run_sampler
+      ~BackPop.set_SSEDict_flags
       ~BackPop.set_evolvebin_flags
       ~BackPop.set_flags
 
@@ -21,5 +22,6 @@ BackPop
    .. automethod:: evolv2
    .. automethod:: likelihood
    .. automethod:: run_sampler
+   .. automethod:: set_SSEDict_flags
    .. automethod:: set_evolvebin_flags
    .. automethod:: set_flags
