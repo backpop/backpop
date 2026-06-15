@@ -90,7 +90,10 @@ def parse_inifile(ini_file):
 
         SSEDict = config_dict["sse"]
         for k, v in SSEDict.items():
-            SSEDict[k] = v
+            if k == 'z_accuracy_limit':
+                SSEDict[k] = float(v)
+            else:
+                SSEDict[k] = v
     else:
         SSEDict = {'stellar_engine': 'sse'}
 
