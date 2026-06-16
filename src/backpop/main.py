@@ -5,15 +5,27 @@ from scipy.stats import multivariate_normal
 import os.path
 
 from cosmic import _evolvebin, evolve
+from cosmic.consts import ALL_COLUMNS, INTEGER_COLUMNS, BPP_COLUMNS, BCM_COLUMNS, KICK_COLUMNS, GROUPED_SETTINGS
 from nautilus import Prior, Sampler
 
-from .consts import *
 from .files import parse_inifile
 from .phase import select_phase, add_vsys_from_kicks
 from .posteriors import BackPopsteriors
 
 
 __all__ = ["BackPop"]
+
+
+# remove bin_num from kick_columns and calculate shape
+KICK_COLUMNS = [col for col in KICK_COLUMNS if col != "bin_num"]
+KICK_SHAPE = (2, len(KICK_COLUMNS))
+
+NATAL_KICK_TRANSLATOR = {
+    "vk": 0,
+    "phi": 1,
+    "theta": 2,
+    "omega": 3
+}
 
 
 class BackPop():
@@ -359,11 +371,14 @@ class BackPop():
             Dictionary of COSMIC flags to be passed to COSMIC
         '''
         # the following is equivalent to _evolvebin.windvars.neta = flags["neta"], etc
-        for g in FLAG_GROUPS:
-            for k in FLAG_GROUPS[g]:
+        for g in GROUPED_SETTINGS:
+            for k in GROUPED_SETTINGS[g]:
                 if k not in self.flags:
                     raise ValueError(f"flag {k} not found in flags dictionary")
-                setattr(getattr(_evolvebin, g), k, self.flags[k])
+                if k == "randomseed":
+                    setattr(getattr(_evolvebin, g), "idum1", self.flags[k])
+                else:
+                    setattr(getattr(_evolvebin, g), k.lower(), self.flags[k])
         return None
     
     def set_SSEDict_flags(self):

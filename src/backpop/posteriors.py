@@ -4,9 +4,13 @@ import numpy as np
 import h5py as h5
 import pandas as pd
 
-from .consts import KICK_SHAPE, BPP_COLUMNS, KICK_COLUMNS, BCM_COLUMNS
+from cosmic.consts import BPP_COLUMNS, KICK_COLUMNS, BCM_COLUMNS
 
 __all__ = ['BackPopsteriors']
+
+# remove bin_num from kick_columns and calculate shape
+KICK_COLUMNS = [col for col in KICK_COLUMNS if col != "bin_num"]
+KICK_SHAPE = (2, len(KICK_COLUMNS))
 
 class BackPopsteriors():
     def __init__(self, file=None, points=None, log_w=None, log_l=None, var_names=None,

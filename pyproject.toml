@@ -46,7 +46,7 @@ dependencies = [
     "sphinx-copybutton",
     "meson",
     "nautilus-sampler",
-    "cosmic-popsynth"
+    "cosmic-popsynth >= 4.1, < 4.2",
 ]
 
 # add optional dependencies for docs

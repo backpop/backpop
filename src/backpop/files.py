@@ -1,7 +1,7 @@
 import ast
 import os
 from configparser import ConfigParser
-from .consts import BPP_COLUMNS, BCM_COLUMNS
+from cosmic.consts import BPP_COLUMNS, BCM_COLUMNS
 
 __all__ = ["parse_inifile"]
 
@@ -66,6 +66,7 @@ def parse_inifile(ini_file):
         and 'bpp_columns' do not include the observable constraints
     """
     config_file = ConfigParser()
+    config_file.optionxform = str 
     config_file.read(ini_file)
     config_dict = {section: dict(config_file.items(section)) for section in config_file.sections()}
 
