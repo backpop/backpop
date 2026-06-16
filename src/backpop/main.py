@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import re
 
 from scipy.stats import multivariate_normal
 import os.path
@@ -301,19 +302,17 @@ class BackPop():
                                  index=kick_info_arrays[:, -1].astype(int))
             
             phase_table = add_vsys_from_kicks(bcm if self.config["use_bcm"] else bpp, kick_info)
-            # flip _1 and _2 if MRR = True
-            out = select_phase(phase_table, condition=self.config["phase_condition"])
+
+            # flip columns _1 and _2 for MRR
+            if self.config['mrr']:
+                rename_map = {col: swap_1_2(col) for col in phase_table.columns}
+                phase_table_MRR = phase_table.rename(columns=rename_map)
+                out = select_phase(phase_table_MRR, condition=self.config["phase_condition"])
+
+            else:
+                out = select_phase(phase_table, condition=self.config["phase_condition"])
 
             if len(out) > 0:
-
-                # check for MRR for DCO - phase select
-                # obs_out = out[self.obs["out_name"]]
-
-                # if obs_out["mass_1"].iloc[0] < obs_out["mass_2"].iloc[0]:
-                #     m1_col = obs_out.pop("mass_2")
-                #     m2_col = obs_out.pop("mass_1")
-                #     obs_out.insert(0, "mass_1", m1_col)
-                #     obs_out.insert(1, "mass_2", m2_col)
 
                 # print(f'Found a binary that meets the phase condition! m1={m1:1.2f}, m2={m2:1.2f}, tb={tb:1.2f}, e={e:1.2f}, tphysf={tphysf:1.2f}, vsys_2_total ={out["vsys_2_total"].iloc[0]:1.2f}, teff_2 = {out["teff_2"].iloc[0]:1.2f}, log_lum_2 = {np.log10(out["lum_2"].iloc[0]):1.2f}')
                 
@@ -413,3 +412,9 @@ class BackPop():
 
         else:
             raise ValueError("Use either 'sse' or 'metisse' as stellar engine")
+
+def swap_1_2(col):
+    '''
+    Helper function to rename columns in MRR case
+    '''
+    return re.sub(r'_([12])(?=_|$)', lambda m: '_2' if m.group(1) == '1' else '_1', col)
