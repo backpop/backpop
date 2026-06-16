@@ -30,7 +30,7 @@ def _eval_div_only(node):
 
     raise ValueError(f"Unsupported construct: {ast.dump(node, include_attributes=False)}")
 
-def parse_inifile(ini_file):
+def parse_inifile(backpop_ini, bse_ini):
     """Parse BackPop and COSMIC configurations from an ini file
 
     Parameters
@@ -65,37 +65,57 @@ def parse_inifile(ini_file):
         If 'bpp_columns' or 'bcm_columns' provided are not in BPP_COLUMNS or BCM_COLUMNS 
         and 'bpp_columns' do not include the observable constraints
     """
+    # unpack the backpop ini file
     config_file = ConfigParser()
-    config_file.read(ini_file)
+    config_file.read(backpop_ini)
     config_dict = {section: dict(config_file.items(section)) for section in config_file.sections()}
 
+    # set main settings
     config = config_dict["backpop"]
     for k in ["n_threads", "n_eff", "n_live"]:
         config[k] = int(config[k])
-    for k in ["verbose", "resume", "use_bcm"]:
+    for k in ["verbose", "resume", "mrr", "use_bcm"]:
         config[k] = config[k].lower() in ["true", "1", "yes"]
-        
-    # make sure all flags are the correct type
-    flags = config_dict["bse"]
-    for k, v in flags.items():
-        flags[k] = _eval_div_only(ast.parse(v, mode='eval').body)
-    
-    # set SSE dictionary
-    sse = config_dict["sse"]
-    if sse["stellar_engine"] == "metisse":
 
-        # check hydrogen and helium paths exist
-        assert os.path.exists(sse["path_to_tracks"]), f'{sse["path_to_tracks"]} does not exist!'
-        assert os.path.exists(sse["path_to_he_tracks"]), f'{sse["path_to_he_tracks"]} does not exist!'
+    # BPP settings
+    if config["bpp_columns"] != "" and config["bpp_columns"].lower() != "none":
+        config["bpp_columns"] = ast.literal_eval(config["bpp_columns"])
+        # check bpp_columns names are found in BPP_COLUMNS
+        for k in config["bpp_columns"]:
+            if k not in BPP_COLUMNS:
+                raise ValueError(f'Invalid column name: {k}. '
+                                 f'Not found in BPP columns: {BPP_COLUMNS}')
 
-        SSEDict = config_dict["sse"]
-        for k, v in SSEDict.items():
-            if k == 'z_accuracy_limit':
-                SSEDict[k] = float(v)
-            else:
-                SSEDict[k] = v
+        # check bpp_columns includes observables
+        for k in obs["out_name"]:
+            if k not in config["bpp_columns"]:
+                raise ValueError(f'Missing column: {k}. You must provide BPP column names '
+                                 f'that match observables: {obs["out_name"]}')
     else:
-        SSEDict = {'stellar_engine': 'sse'}
+        config["bpp_columns"] = BPP_COLUMNS
+
+    if config["n_bpp_rows"] != "" and config["n_bpp_rows"].lower() != "none":
+        config["n_bpp_rows"] = int(config["n_bpp_rows"])
+    else:
+        config["n_bpp_rows"] = 35
+    
+    # BCM settings
+    if config["use_bcm"] == "true":
+        if config["bcm_columns"] != "" and config["bcm_columns"].lower() != "none":
+            # check bcm_columns names are found in BCM_COLUMNS
+            config["bcm_columns"] = ast.literal_eval(config["bcm_columns"])
+            for k in config["bcm_columns"]:
+                if k not in BCM_COLUMNS:
+                    raise ValueError(f'Invalid column name: {k}. '
+                                     f'Not found in BCM columns: {BCM_COLUMNS}')
+
+            # check bcm_columns includes observables
+            for k in obs["out_name"]:
+                if k not in config["bcm_columns"]:
+                    raise ValueError(f'Missing column: {k}. You must provide BCM column names '
+                                     f'that match observables: {obs["out_name"]}')
+        else:
+            config["bcm_columns"] = BCM_COLUMNS
 
     # convert ini file inputs to observations, variables, and fixed parameters
     obs = {
@@ -130,49 +150,35 @@ def parse_inifile(ini_file):
             fixed_name = k.split("backpop.fixed::")[-1]
             fixed[fixed_name] = float(config_dict[k]["value"].strip())
 
-    # enforce m1 > m2 COSMIC convention
-    # if "m1" and "m2" in obs["name"]:
-    #     if float(config_dict["backpop.obs::m1"]["mean"].strip()) < float(config_dict["backpop.obs::m2"]["mean"].strip()):
-    #         raise ValueError('m1 must be > m2 by convention. '
-    #                         'Your observational means are '
-    #                         f'm1 = {config_dict["backpop.obs::m1"]["mean"]} and m2 = {config_dict["backpop.obs::m2"]["mean"]}.')
-    
-    if config["bpp_columns"] != "" and config["bpp_columns"].lower() != "none":
-        config["bpp_columns"] = ast.literal_eval(config["bpp_columns"])
-        # check bpp_columns names are found in BPP_COLUMNS
-        for k in config["bpp_columns"]:
-            if k not in BPP_COLUMNS:
-                raise ValueError(f'Invalid column name: {k}. '
-                                 f'Not found in BPP columns: {BPP_COLUMNS}')
+    # set SSE dictionary
+    sse = config_dict["sse"]
+    if sse["stellar_engine"] == "metisse":
 
-        # check bpp_columns includes observables
-        for k in obs["out_name"]:
-            if k not in config["bpp_columns"]:
-                raise ValueError(f'Missing column: {k}. You must provide BPP column names '
-                                 f'that match observables: {obs["out_name"]}')
+        # check hydrogen and helium paths exist
+        assert os.path.exists(sse["path_to_tracks"]), f'{sse["path_to_tracks"]} does not exist!'
+        assert os.path.exists(sse["path_to_he_tracks"]), f'{sse["path_to_he_tracks"]} does not exist!'
+
+        SSEDict = config_dict["sse"]
+        for k, v in SSEDict.items():
+            if k == 'z_accuracy_limit':
+                SSEDict[k] = float(v)
+            else:
+                SSEDict[k] = v
     else:
-        config["bpp_columns"] = BPP_COLUMNS
-        
-    if config["use_bcm"] == "true":
-        if config["bcm_columns"] != "" and config["bcm_columns"].lower() != "none":
-            # check bcm_columns names are found in BCM_COLUMNS
-            config["bcm_columns"] = ast.literal_eval(config["bcm_columns"])
-            for k in config["bcm_columns"]:
-                if k not in BCM_COLUMNS:
-                    raise ValueError(f'Invalid column name: {k}. '
-                                     f'Not found in BCM columns: {BCM_COLUMNS}')
+        SSEDict = {'stellar_engine': 'sse'}
 
-            # check bcm_columns includes observables
-            for k in obs["out_name"]:
-                if k not in config["bcm_columns"]:
-                    raise ValueError(f'Missing column: {k}. You must provide BCM column names '
-                                     f'that match observables: {obs["out_name"]}')
-        else:
-            config["bcm_columns"] = BCM_COLUMNS
+    # unpack the bse ini file
+    bse_file = ConfigParser()
+    bse_file.read(bse_ini)
+    bse_dict = {section: dict(bse_file.items(section)) for section in bse_file.sections()}
+
+    # make sure all flags are the correct type
+    flags = bse_dict["bse"]
+    for k, v in flags.items():
+        flags[k] = _eval_div_only(ast.parse(v, mode='eval').body)
     
-    if config["n_bpp_rows"] != "" and config["n_bpp_rows"].lower() != "none":
-        config["n_bpp_rows"] = int(config["n_bpp_rows"])
-    else:
-        config["n_bpp_rows"] = 35
+    # set random seed
+    random_seed = config_dict['rand_seed']
+    flags['random_seed'] = int(random_seed.get('seed'))
 
-    return config, flags, SSEDict, obs, var, fixed
+    return config, obs, var, fixed, SSEDict, flags
