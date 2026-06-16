@@ -50,12 +50,13 @@ class BackPop():
     sampler : nautilus.Sampler
         Nautilus Sampler object used to perform the sampling.
     """
-    def __init__(self, config_file='params.ini'):
+    def __init__(self, config_file='params.ini', bse_file ='bse.ini'):
         
         self.config_file = config_file
+        self.bse_file = bse_file
 
         # parse the configuration ini file, set flags and config
-        self.config, self.flags, self.SSEDict, self.obs, self.var, self.fixed = parse_inifile(self.config_file)
+        self.config, self.obs, self.var, self.fixed, self.SSEDict, self.flags = parse_inifile(self.config_file, self.bse_file)
         self.init_flags = self.flags.copy()
         if self.config["verbose"]:
             print(f"Initializing BackPop with {os.path.split(config_file)[-1]}")
@@ -233,6 +234,8 @@ class BackPop():
         self.set_flags(params_in)
         self.set_evolvebin_flags()
         self.set_SSEDict_flags()
+
+        # import pdb; pdb.set_trace()
         
         bpp_columns = BPP_COLUMNS
         bcm_columns = BCM_COLUMNS
@@ -298,6 +301,7 @@ class BackPop():
                                  index=kick_info_arrays[:, -1].astype(int))
             
             phase_table = add_vsys_from_kicks(bcm if self.config["use_bcm"] else bpp, kick_info)
+            # flip _1 and _2 if MRR = True
             out = select_phase(phase_table, condition=self.config["phase_condition"])
 
             if len(out) > 0:
