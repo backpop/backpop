@@ -1,0 +1,257 @@
+[
+    {
+        "category": "BackPop",
+        "category_label": "BackPop Settings",
+        "category_description": "Settings that filter the data returned by BackPop simulations",
+        "docs-colour": "cadetblue",
+        "settings": [
+            {
+                "name": "n_threads",
+                "description": "Sets the number of cores to use in multiprocessing",
+                "type": "number",
+                "options-preface": "",
+                "options": [
+                    {
+                        "name": "integer values",
+                        "description": "Number of cores"
+                    },
+                    {
+                        "name": 1,
+                        "description": "For example, this sets the number of cores to 1",
+                        "default": true
+                    }
+                ]
+            },
+            {
+                "name": "n_eff",
+                "description": "Minimum effective sample size (see <a href='https://nautilus-sampler.readthedocs.io/en/latest/api_full.html#nautilus.sampler.Sampler.run'>n_eff docs</a> for more information)",
+                "type": "number",
+                "options-preface": "",
+                "options": [
+                    {
+                        "name": 8000,
+                        "description": "For example, this sets the minimum effective sample size to be 8000",
+                        "default": true
+                    }
+                ]
+            },
+            {
+                "name": "n_live",
+                "description": "Number of live points (see <a href='https://nautilus-sampler.readthedocs.io/en/latest/api_full.html#nautilus.sampler.Sampler>'>n_live docs</a> for more information)",
+                "type": "number",
+                "options-preface": "",
+                "options": [
+                    {
+                        "name": 1000,
+                        "description": "For example, this sets the number of live points to be 1000",
+                        "default": true
+                    }
+                ]
+            },
+            {
+                "name": "verbose",
+                "description": "Whether to print verbose output from BackPop and sampler.",
+                "type": "dropdown",
+                "options-preface": "",
+                "options": [
+                    {
+                        "name": "True",
+                        "description": "Print verbose output from BackPop and sampler progress."
+                    },
+                    {
+                        "name": "False",
+                        "description": "Do not print verbose output from Backpop and sampler progress.",
+                        "default": true
+                    }
+                ]
+            },
+            {
+                "name": "output folder",
+                "description": "Path to save output files. If not supplied, output folder created in directory BackPop is run.",
+                "type": "string",
+                "options-preface": "",
+                "options": [
+                    {
+                        "name": "path/to/output_folder",
+                        "description": "This specifies the absolute path to save the output files from BackPop."
+                    },
+                    {
+                        "name": "",
+                        "description": "Default value (not supplying an output path)",
+                        "default": true
+                    }
+                ]
+            },
+            {
+                "name": "resume",
+                "description": "Resumes sampling from previous run (see `resume doc <https://nautilus-sampler.readthedocs.io/en/latest/api_full.html#nautilus.sampler.Sampler>`_",
+                "type": "dropdown",
+                "options-preface": "",
+                "options": [
+                    {
+                        "name": "True",
+                        "description": "Resume sampler from previous run."
+                    },
+                    {
+                        "name": "False",
+                        "description": "Do not resume sampler from previous run. Restart sampler and rewrite files.",
+                        "default": true
+                    }
+                ]
+            },
+            {
+                "name": "use_bcm",
+                "description": "Saves BCM from Backpop run (see `bcm doc <https://cosmic-popsynth.github.io/COSMIC/pages/config_and_output/output_info.html#bcm-user-specified-timestep-table>`_",
+                "type": "dropdown",
+                "options-preface": "",
+                "options": [
+                    {
+                        "name": "True",
+                        "description": "Saves BCM from BackPop run."
+                    },
+                    {
+                        "name": "False",
+                        "description": "Does not save BCM from backpop run.",
+                        "default": true
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "category": "observables",
+        "category_label": "Observables",
+        "category_description": "Settings that change how the initial binary population is sampled",
+        "docs-colour": "darkseagreen",
+        "settings": [
+            {
+                "name": "sampling_method",
+                "description": "Select which models to use to generate an initial sample of binary parameters at Zero Age Main Sequence",
+                "type": "dropdown",
+                "options-preface": "",
+                "options": [
+                    {
+                        "name": "independent",
+                        "description": "Initialize binaries with independent parameter distributions for the primary mass, mass ratio, eccentricity, separation, and binary fraction",
+                        "default": true
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "category": "priors",
+        "category_label": "Priors",
+        "category_description": "Settings that control the convergence of the simulation run with cosmic-pop",
+        "docs-colour": "#a873dd",
+        "settings": [
+            {
+                "name": "convergence_params",
+                "description": "A list of parameters you would like to verify have converged to a single distribution shape when running cosmic-pop from the command line.",
+                "type": "checkbox",
+                "options-preface": "",
+                "options": [
+                    {
+                        "name": "mass_1",
+                        "description": "Primary mass",
+                        "default": true
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "category": "sse", 
+        "category_label": "Single star evolution",
+        "category_description": "Settings that control the single star evolution in the simulation",
+        "docs-colour": "lightsteelblue",
+        "settings": [
+            {
+                "name": "stellar_engine",
+                "description": "Select which stellar evolution engine to use for single star evolution",
+                "type": "dropdown",
+                "options-preface": "",
+                "options": [
+                    {
+                        "name": "sse",
+                        "description": "Use SSE for single star evolution which will apply the fitting formulae from <a href='https://ui.adsabs.harvard.edu/abs/2000MNRAS.315..543H/abstract'>Hurley+2000</a> for the single star evolution",
+                        "default": true
+
+                    },
+                    {
+                        "name": "metisse",
+                        "description": "Use METISSE for single star evolution, must supply <code>path_to_tracks</code> and <code>path_to_he_tracks</code>"
+                    }
+                ]
+            }, 
+            {
+                "name": "path_to_tracks",
+                "description": "Path to the METISSE tracks for single star evolution. Must be supplied if <code>stellar_engine</code> is set to <code>metisse</code>",
+                "type": "string",
+                "options-preface": "",
+                "options": [
+                    {
+                        "name": "path/to/tracks",
+                        "description": "This specifies the absolute path to the EEP tracks for single star evolution. Leave the string empty if not using METISSE for single star evolution."
+                    },
+                    {
+                        "name": "",
+                        "description": "Default value (not using METISSE for single star evolution)",
+                        "default": true
+                    }
+                ]
+            },
+            {
+                "name": "path_to_he_tracks",
+                "description": "Path to the METISSE tracks for helium star evolution. Must be supplied if <code>stellar_engine</code> is set to <code>metisse</code>",
+                "type": "string",
+                "options-preface": "",
+                "options": [
+                    {
+                        "name": "path/to/he_tracks",
+                        "description": "This specifies the absolute path to the EEP tracks for helium star evolution. Leave the string empty if not using METISSE for single star evolution."
+                    },
+                    {
+                        "name": "",
+                        "description": "Default value (not using METISSE for single star evolution)",
+                        "default": true
+                    }
+                ]
+            },
+            {
+                "name": "z_accuracy_limit",
+                "description": "Sets the maximum allowed relative difference between the supplied metallicity and the tracks used by METISSE. If cosmic throws an error due to metallicity, increasing this slightly may help. Must be supplied if <code>stellar_engine</code> is set to <code>metisse</code>",
+                "type": "number",
+                "options-preface": "",
+                "options": [
+                    {
+                        "name": "positive values",
+                        "description": "Minimum metallicity"
+                    },
+                    {
+                        "name": 0.01,
+                        "description": "Recommended value",
+                        "default": true
+                    }
+                ]
+            },
+            {
+                "name": "metisse_verbose",
+                "description": "Whether to print verbose output from METISSE when using METISSE for single star evolution.",
+                "type": "dropdown",
+                "options-preface": "",
+                "options": [
+                    {
+                        "name": "True",
+                        "description": "Print verbose output from METISSE when using METISSE for single star evolution."
+                    },
+                    {
+                        "name": "False",
+                        "description": "Do not print verbose output from METISSE when using METISSE for single star evolution.",
+                        "default": true
+                    }
+                ]
+            }
+        ]
+    }
+]

@@ -1,4 +1,5 @@
 import ast
+import os
 from configparser import ConfigParser
 from .consts import BPP_COLUMNS, BCM_COLUMNS
 
@@ -43,6 +44,8 @@ def parse_inifile(ini_file):
         Dictionary of BackPop configuration parameters
     flags : dict
         Dictionary of BSE flags
+    SSEDict: dict
+        Dictionary of SSE flags and paths
     obs : dict
         Dictionary of observations with keys "mean", "sigma", "name", and "out_name"
     var : dict
@@ -52,6 +55,12 @@ def parse_inifile(ini_file):
         
     Raises
     ------
+    os error
+        If paths to hydrogen or helium tracks do not exist
+    
+    ValueError
+        If provided observational m1 mean is < m2 mean
+
     ValueError
         If 'bpp_columns' or 'bcm_columns' provided are not in BPP_COLUMNS or BCM_COLUMNS 
         and 'bpp_columns' do not include the observable constraints
@@ -70,6 +79,23 @@ def parse_inifile(ini_file):
     flags = config_dict["bse"]
     for k, v in flags.items():
         flags[k] = _eval_div_only(ast.parse(v, mode='eval').body)
+    
+    # set SSE dictionary
+    sse = config_dict["sse"]
+    if sse["stellar_engine"] == "metisse":
+
+        # check hydrogen and helium paths exist
+        assert os.path.exists(sse["path_to_tracks"]), f'{sse["path_to_tracks"]} does not exist!'
+        assert os.path.exists(sse["path_to_he_tracks"]), f'{sse["path_to_he_tracks"]} does not exist!'
+
+        SSEDict = config_dict["sse"]
+        for k, v in SSEDict.items():
+            if k == 'z_accuracy_limit':
+                SSEDict[k] = float(v)
+            else:
+                SSEDict[k] = v
+    else:
+        SSEDict = {'stellar_engine': 'sse'}
 
     # convert ini file inputs to observations, variables, and fixed parameters
     obs = {
@@ -103,15 +129,23 @@ def parse_inifile(ini_file):
         if k.startswith("backpop.fixed::"):
             fixed_name = k.split("backpop.fixed::")[-1]
             fixed[fixed_name] = float(config_dict[k]["value"].strip())
+
+    # enforce m1 > m2 COSMIC convention
+    # if "m1" and "m2" in obs["name"]:
+    #     if float(config_dict["backpop.obs::m1"]["mean"].strip()) < float(config_dict["backpop.obs::m2"]["mean"].strip()):
+    #         raise ValueError('m1 must be > m2 by convention. '
+    #                         'Your observational means are '
+    #                         f'm1 = {config_dict["backpop.obs::m1"]["mean"]} and m2 = {config_dict["backpop.obs::m2"]["mean"]}.')
     
     if config["bpp_columns"] != "" and config["bpp_columns"].lower() != "none":
         config["bpp_columns"] = ast.literal_eval(config["bpp_columns"])
+        # check bpp_columns names are found in BPP_COLUMNS
         for k in config["bpp_columns"]:
             if k not in BPP_COLUMNS:
                 raise ValueError(f'Invalid column name: {k}. '
                                  f'Not found in BPP columns: {BPP_COLUMNS}')
 
-        # make sure bpp_columns includes observables
+        # check bpp_columns includes observables
         for k in obs["out_name"]:
             if k not in config["bpp_columns"]:
                 raise ValueError(f'Missing column: {k}. You must provide BPP column names '
@@ -121,14 +155,14 @@ def parse_inifile(ini_file):
         
     if config["use_bcm"] == "true":
         if config["bcm_columns"] != "" and config["bcm_columns"].lower() != "none":
-            # make sure bcm_columns names are found in BCM_COLUMNS
+            # check bcm_columns names are found in BCM_COLUMNS
             config["bcm_columns"] = ast.literal_eval(config["bcm_columns"])
             for k in config["bcm_columns"]:
                 if k not in BCM_COLUMNS:
                     raise ValueError(f'Invalid column name: {k}. '
                                      f'Not found in BCM columns: {BCM_COLUMNS}')
 
-            # make sure bcm_columns includes observables
+            # check bcm_columns includes observables
             for k in obs["out_name"]:
                 if k not in config["bcm_columns"]:
                     raise ValueError(f'Missing column: {k}. You must provide BCM column names '
@@ -141,4 +175,4 @@ def parse_inifile(ini_file):
     else:
         config["n_bpp_rows"] = 35
 
-    return config, flags, obs, var, fixed
+    return config, flags, SSEDict, obs, var, fixed

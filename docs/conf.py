@@ -15,6 +15,7 @@ import sys
 import inspect
 import pathlib
 import datetime
+import time
 sys.path.insert(0, os.path.abspath('.'))
 
 # HACKS - credit to "https://github.com/rodluger/starry_process"
@@ -25,7 +26,7 @@ import hacks
 # -- Project information -----------------------------------------------------
 
 project = "BackPop"
-author = "Tom Wagg, Katie Breivik & Kaze Wong"
+author = "Tom Wagg, Katie Breivik, Kaze Wong, & Hannah Skobe"
 copyright = '{0}, {1}'.format(datetime.datetime.now().year, author)
 
 
@@ -47,7 +48,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinxcontrib.bibtex',
     'sphinx.ext.intersphinx',
-    # 'sphinx_copybutton',
+    'sphinx_copybutton',
     'sphinx.ext.linkcode',
     'sphinx_togglebutton'
 ]
@@ -97,7 +98,7 @@ exclude_patterns = [
 # a list of builtin themes.
 #
 html_theme = 'sphinx_immaterial'
-html_logo = '_static/backpop-square.png'
+html_logo = '_static/tina.png'
 
 html_theme_options = {
 
@@ -153,18 +154,22 @@ html_theme_options = {
 
 html_last_updated_fmt = "%Y %b %d at %H:%M:%S UTC"
 html_show_sourcelink = False
-html_favicon = "_static/backpop-square.ico"
+html_favicon = "_static/dco_merger.ico"
 
 # html_sidebars = {
-#     "**": ["logo-text.html", "globaltoc.html", "localtoc.html", "searchbox.html"],
-#     "index": ["logo-text.html", "globaltoc.html", "searchbox.html"],
+#     "*": ["sidebar-nav-bs.html"],
+#     "index": [],
+#     "pages/install": ["page-toc"],
+#     "pages/getting_started": ["page-toc"],
+#     "pages/tutorials": [],
+#     "pages/cite": []
 # }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
-html_css_files = ["custom.css"]
+html_css_files = [("custom.css", {'v': str(int(time.time()))})]
 html_js_files = ['custom.js']
 
 # autodocs

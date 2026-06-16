@@ -1,87 +1,108 @@
+/* ############################## */
+/* main color scheme */
+/* ############################## */
 :root {
-    --backpop-primary: #074662;
-    --backpop-primary-darkmode: #2e7897;
-    --backpop-secondary: #535abd;
+    --backpop-primary: #1e446e;          /* dark navy blue - primary brand color */
+    --backpop-primary-darkmode: #0070c0; /* medium blue - primary color for dark mode */
+    --backpop-secondary: #0096ff;        /* bright blue - accent/secondary color */
 }
 
+/* ############################## */
+/* COSMIC iframe embed */
+/* ############################## */
 #COSMIC-frame {
-    width: 100%;
-    height: 500px;
-    border: none;
+    width: 100%;    /* full width of parent container */
+    height: 500px;  /* fixed height for embedded frame */
+    border: none;   /* remove default iframe border */
 }
 
+/* ############################## */
+/* MkDocs - header source button */
+/* ############################## */
 .md-header-nav__source {
-    width: auto !important;
-    padding-right: 0 !important;
+    width: auto !important;      /* allow natural width instead of fixed */
+    padding-right: 0 !important; /* remove right padding */
 }
 
+/* ############################## */
+/* MkDocs - content grid */
+/* ############################## */
 .md-grid {
-    max-width: unset !important;
-    margin-left: 0.5rem !important;
-    margin-right: 0.5rem !important;
+    max-width: unset !important;     /* remove default max-width constraint */
+    margin-left: 0.5rem !important;  /* small left margin */
+    margin-right: 0.5rem !important; /* small right margin */
 }
 
+/* ############################## */
+/* MkDocs - primary color overrides (indigo -> backpop-primary) */
+/* ############################## */
 button[data-md-color-primary=indigo] {
-    background-color: var(--backpop-primary) !important;
+    background-color: var(--backpop-primary) !important; /* theme picker button color */
 }
 
 [data-md-color-primary=indigo] .md-typeset a {
-    color: var(--backpop-primary) !important;
+    color: var(--backpop-primary) !important; /* body link color in light mode */
 }
 
 [data-md-color-scheme=slate] .md-typeset a {
-    color: var(--backpop-primary-darkmode) !important;
+    color: var(--backpop-primary-darkmode) !important; /* body link color in dark mode */
 }
 
 [data-md-color-primary=indigo] .md-header,
 [data-md-color-primary=indigo] .md-hero {
-    background-color: var(--backpop-primary) !important;
+    background-color: var(--backpop-primary-darkmode) !important; /* header and hero background */
 }
 
 [data-md-color-primary=indigo] .md-nav__link--active,
 [data-md-color-primary=indigo] .md-nav__link:active {
-    color: var(--backpop-primary) !important;
+    color: var(--backpop-primary) !important; /* active nav link in light mode */
 }
 
 [data-md-color-primary=indigo][data-md-color-scheme=slate] .md-nav__link--active,
 [data-md-color-primary=indigo][data-md-color-scheme=slate] .md-nav__link:active {
-    color: var(--backpop-primary-darkmode) !important;
+    color: var(--backpop-primary-darkmode) !important; /* active nav link in dark mode */
 }
 
 [data-md-color-primary=indigo] .md-nav__item--nested>.md-nav__link {
-    color: inherit
+    color: inherit /* nested nav items inherit parent color */
 }
 
+/* ############################## */
+/* MkDocs - responsive nav overrides */
+/* ############################## */
 @media only screen and (max-width:59.9375em) {   
     [data-md-color-primary=indigo] .md-nav__source {
-        background-color: var(--backpop-primary) !important;
+        background-color: var(--backpop-primary) !important; /* source button on mobile */
     }
 }
 
 @media only screen and (max-width:76.1875em) {
     html [data-md-color-primary=indigo] .md-nav--primary .md-nav__title--site {
-        background-color: var(--backpop-primary) !important;
+        background-color: var(--backpop-primary) !important; /* sidebar site title on tablet */
     }
 }
 
 @media only screen and (min-width:76.25em) {
     [data-md-color-primary=indigo] .md-tabs {
-        background-color: var(--backpop-primary) !important;
+        background-color: var(--backpop-primary) !important; /* top tab bar on desktop */
     }
 }
 
+/* ############################## */
+/* MkDocs - accent color overrides (red -> backpop-secondary) */
+/* ############################## */
 button[data-md-color-accent=red] {
-    background-color: var(--backpop-secondary) !important;
+    background-color: var(--backpop-secondary) !important; /* theme picker accent button */
 }
 
 [data-md-color-accent=red] .md-typeset a:active,
 [data-md-color-accent=red] .md-typeset a:hover {
-    color: var(--backpop-secondary) !important;
+    color: var(--backpop-secondary) !important; /* link hover/active color */
 }
 
 [data-md-color-accent=red] .md-typeset .codehilite pre::-webkit-scrollbar-thumb:hover,
 [data-md-color-accent=red] .md-typeset pre code::-webkit-scrollbar-thumb:hover {
-    background-color: var(--backpop-secondary) !important;
+    background-color: var(--backpop-secondary) !important; /* code block scrollbar on hover */
 }
 
 [data-md-color-accent=red] .md-nav__link:focus,
@@ -93,26 +114,349 @@ button[data-md-color-accent=red] {
 [data-md-color-accent=red] .md-typeset [id] .headerlink:focus,
 [data-md-color-accent=red] .md-typeset [id]:hover .headerlink:hover,
 [data-md-color-accent=red] .md-typeset [id]:target .headerlink {
-    color: var(--backpop-secondary) !important;
+    color: var(--backpop-secondary) !important; /* accent color for nav focus, footnotes, clipboard, and heading anchors */
 }
 
 [data-md-color-accent=red] .md-search__scrollwrap::-webkit-scrollbar-thumb:hover {
-    background-color: var(--backpop-secondary) !important;
+    background-color: var(--backpop-secondary) !important; /* search panel scrollbar on hover */
 }
 
 [data-md-color-accent=red] .md-search-result__link:hover,
 [data-md-color-accent=red] .md-search-result__link[data-md-state=active] {
-    background-color: rgba(255, 23, 68, .1)
+    background-color: rgba(255, 23, 68, .1) /* search result hover highlight (semi-transparent) */
 }
 
 [data-md-color-accent=red] .md-sidebar__scrollwrap::-webkit-scrollbar-thumb:hover {
-    background-color: var(--backpop-secondary) !important;
+    background-color: var(--backpop-secondary) !important; /* sidebar scrollbar on hover */
 }
 
 [data-md-color-accent=red] .md-source-file:hover:before {
-    background-color: var(--backpop-secondary) !important;
+    background-color: var(--backpop-secondary) !important; /* source file link hover highlight */
 }
 
 .md-clipboard:focus, .md-clipboard:hover {
-    color: var(--backpop-secondary) !important;
+    color: var(--backpop-secondary) !important; /* copy-to-clipboard button hover color */
+}
+
+/* ############################## */
+/* navigation grid - 2x2 block layout */
+/* ############################## */
+.toms-nav-container {
+    margin: 20px auto;               /* center horizontally with vertical spacing */
+    width: 600px;                    /* fixed container width */
+    height: 150px;                   /* fixed container height */
+    /* background-color: #fff; */
+    display: grid;
+    grid-template-columns: 300px 300px; /* two equal columns */
+    grid-template-rows: 75px 75px;      /* two equal rows */
+    grid-column-gap: 20px;           /* horizontal gap between cells */
+    grid-row-gap: 20px;              /* vertical gap between cells */
+}
+
+.toms-nav-container .box, .toms-nav-box {
+    background-color: var(--backpop-primary); /* navy blue card background */
+    padding: 20px;                   /* inner spacing */
+    border-radius: 10px;             /* rounded corners */
+    color: #ffffff;                  /* white text */
+    display: flex;
+    align-items: center;             /* vertically center content */
+    justify-content: center;         /* horizontally center content */
+    font-size: 25px;                 /* large readable text */
+    text-align: center;
+    transition: 0.2s;                /* smooth animation for hover effect */
+    cursor: pointer;                 /* pointer cursor on hover */
+}
+
+/* shrink on hover */
+.toms-nav-container .box:hover, .toms-nav-box:hover {
+    transform: scale(0.9);                       /* shrink card slightly */
+    background-color: var(--backpop-secondary);  /* switch to accent blue on hover */
+}
+
+/* ############################## */
+/* utility - text alignment */
+/* ############################## */
+.center {
+    text-align: center;
+}
+
+/* ############################## */
+/* Config page setting cards */
+/* ############################## */
+.card.setting-card {
+    border-radius: 1rem;                           /* rounded card corners */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);      /* subtle drop shadow */
+    border: 3px solid var(--color-brand-primary);  /* brand-colored border */
+    margin-bottom: 2rem;                           /* spacing between cards */
+}
+
+.card.setting-card .card-header {
+    background-color: var(--color-brand-primary);  /* brand-colored header bar */
+    border-radius: 0.5rem 0.5rem 0 0;             /* round top corners only */
+    padding: 1rem;
+    color: white;                                  /* white text on colored header */
+}
+
+.card.setting-card .setting-group-title {
+    margin: 0;  /* remove default heading margin */
+    padding: 0; /* remove default heading padding */
+}
+
+/* ############################## */
+/* individual setting rows */
+/* ############################## */
+.setting {
+    margin-bottom: 1rem; /* space between each setting row */
+}
+
+.setting-group-description {
+    margin: 0;  /* remove default paragraph margin */
+    padding: 0; /* remove default paragraph padding */
+}
+
+.card.setting-card .card-body {
+    padding: 1rem; /* inner padding for card content area */
+}
+
+/* ############################## */
+/* setting chooser component */
+/* ############################## */
+.setting-chooser {
+    max-width: 100%; /* prevent overflow on small screens */
+}
+
+.setting-chooser .name-cont {
+    display: flex;
+    align-items: center; /* vertically align name and badge */
+}
+
+.setting-chooser .name {
+    display: inline-block;
+    margin-right: 0.5rem; /* gap between name and adjacent elements */
+}
+
+.setting-chooser .description {
+    margin-bottom: 0; /* remove default paragraph bottom margin */
+}
+
+.setting-chooser .default {
+    margin-top: 0;     /* remove top margin */
+    font-weight: bold; /* emphasize default value label */
+}
+
+.setting-chooser .version-added {
+    font-style: italic; /* visually distinguish version annotation */
+}
+
+/* ############################## */
+/* collapsible options panel */
+/* ############################## */
+.options {
+    overflow: hidden; /* clip content when collapsed */
+}
+
+.options-preface {
+    text-align: start;   /* left-align preface text */
+    margin: 0 1rem 0 0;  /* right margin only */
+}
+
+.options.hide {
+    display: none; /* fully hide collapsed options */
+}
+
+.options-expander {
+    cursor: pointer;                    /* pointer cursor to indicate clickable */
+    color: var(--color-brand-primary);  /* brand color for expand/collapse toggle */
+}
+
+.options .opt-badge-cont {
+    margin-left: 0.5rem; /* space between option label and badge */
+    font-style: italic;  /* italicize badge container text */
+}
+
+/* ############################## */
+/* base badge */
+/* ############################## */
+.badge {
+  display: inline-block;
+  padding: 0.35em 0.65em;    /* compact inner spacing */
+  font-size: 0.75em;         /* smaller than surrounding text */
+  font-weight: 700;          /* bold label */
+  line-height: 1;            /* tight line height */
+  color: #fff;               /* white text by default */
+  text-align: center;
+  white-space: nowrap;       /* prevent badge text from wrapping */
+  vertical-align: baseline;  /* align with surrounding inline text */
+  border-radius: 0.375rem;   /* slightly rounded corners */
+}
+
+/* pill style */
+.badge.rounded-pill {
+  border-radius: 50rem; /* fully rounded ends */
+}
+
+/* badge color variants */
+.badge-primary    { background-color: #0d6efd; }                   /* blue */
+.badge-secondary  { background-color: #6c757d; }                   /* gray */
+.badge-success    { background-color: #198754; }                   /* green */
+.badge-danger     { background-color: #dc3545; }                   /* red */
+.badge-warning    { background-color: #ffc107; color: #000; }      /* yellow - dark text for contrast */
+.badge-info       { background-color: #0dcaf0; color: #000; }      /* cyan - dark text for contrast */
+.badge-light      { background-color: #f8f9fa; color: #000; }      /* near-white - dark text for contrast */
+.badge-dark       { background-color: #212529; }                   /* near-black */
+
+/* ############################## */
+/* setting radio/checkbox labels */
+/* ############################## */
+.setting .col-3 label {
+    cursor: pointer; /* pointer cursor to show label is clickable */
+}
+
+/* ############################## */
+/* form inputs and selects */
+/* ############################## */
+.form-control {
+    display: block;
+    width: calc(100% - 24px);         /* full width minus padding to prevent overflow */
+    padding: 0.375rem 0.75rem;        /* vertical and horizontal inner spacing */
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: var(--color-foreground-primary);          /* theme-aware text color */
+    background-color: var(--color-sidebar-background); /* theme-aware background */
+    background-clip: padding-box;                    /* background stops at border edge */
+    border: 2px solid rgba(0, 0, 0, 0.1);            /* subtle border */
+    border-radius: 0.375rem;                         /* rounded corners */
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; /* smooth focus animation */
+    outline: none;                                   /* remove default browser focus outline */
+}
+
+select.form-control {
+    padding: 0.5rem; /* slightly more padding for select dropdowns */
+    width: 100%;     /* override width calc for selects */
+}
+
+/* ############################## */
+/* settings page section headings */
+/* ############################## */
+.settings-section:first-child h2 {
+    margin-top: 0.5rem; /* reduce top margin for the very first section heading */
+}
+
+.settings-section h2 {
+    font-size: 1.75rem; /* section heading size */
+    margin-top: 3rem;   /* generous spacing above each section */
+}
+
+/* ############################## */
+/* BSE dict - preserve whitespace */
+/* ############################## */
+/* Make sure you can see the full BSE dict */
+#python-bse-settings-dictionary .highlight-python pre {
+    white-space: preserve-breaks; /* keep line breaks in long BSE dict code blocks */
+}
+
+/* ############################## */
+/* button component */
+/* ############################## */
+.btn {
+    padding: 1rem;                          /* generous click target */
+    margin: auto;                           /* center horizontally */
+    background: var(--color-brand-primary); /* brand-colored background */
+    border: none;                           /* remove default border */
+    border-radius: 0.75rem;                 /* rounded corners */
+    color: white;                           /* white label text */
+    cursor: pointer;
+    transition: 300ms;                      /* smooth hover animation */
+}
+
+.btn:hover {
+    filter: brightness(0.8); /* darken button on hover */
+}
+
+.btn-toggle.active {
+    filter: brightness(1.1); /* slightly brighten active toggle */
+    font-weight: bold;        /* bold label for active state */
+}
+
+/* ############################## */
+/* Sphinx gallery - thumbnail alignment */
+/* ############################## */
+/* Centre gallery thumbnail labels and titles */
+.sphx-glr-thumbcontainer[tooltip]:hover::after,
+.sphx-glr-thumbnail-title {
+    text-align: center; /* center tooltip and title text */
+}
+
+/* vertically align content in the thumbnails */
+.sphx-glr-thumbcontainer {
+    justify-content: center; /* vertically center thumbnail content */
+}
+
+/* ############################## */
+/* utility - white link override */
+/* ############################## */
+.link-white {
+    color: white!important; /* force white text on colored backgrounds */
+}
+
+/* ############################## */
+/* tutorial card layout */
+/* ############################## */
+.content:has(.tutorial-card) {
+    width: 100%;    /* full available width */
+    padding: 0 7em; /* large horizontal padding for comfortable reading */
+}
+
+.content:has(.tutorial-card) h1 {
+    text-align: center;
+    margin-left: 100px; /* offset to visually center heading within padded layout */
+}
+
+.center {
+    text-align: center;
+}
+
+.tutorial-card {
+    text-align: center!important; /* center-align all card content */
+}
+
+.tutorial-card-title {
+    font-size: 2rem!important;       /* large card title */
+    font-weight: bold!important;     /* bold card title */
+    margin-bottom: 0.5rem!important; /* tight spacing below title */
+}
+
+.tutorial-card-link {
+    display: block;      /* full-width clickable area */
+    padding: .25rem;
+    font-size: 1rem;
+    border-radius: 10px; /* rounded hover highlight */
+    transition: 300ms;   /* smooth background color change */
+    margin: 0 !important; /* remove any inherited margins */
+}
+
+.tutorial-card-link:hover {
+    background-color: var(--color-brand-primary); /* brand-colored hover background */
+}
+.tutorial-card-link:hover, .tutorial-card-link:hover a {
+    color: white!important; /* white text on brand-colored hover */
+}
+
+/* ############################## */
+/* responsive - mobile breakpoint */
+/* ############################## */
+@media (max-width: 720px) {
+    .toms-nav-container {
+        width: 100%;                 /* full width on small screens */
+        height: auto;                /* dynamic height to fit content */
+        grid-template-columns: 100%; /* single column layout */
+        grid-template-rows: auto;    /* rows size to content */
+        grid-column-gap: 0;          /* no column gap in single-column layout */
+        grid-row-gap: 20px;          /* maintain vertical gap between nav blocks */
+    }
+
+    .content:has(.tutorial-card) {
+        padding: 0 1em; /* reduce horizontal padding on mobile */
+    }
 }
