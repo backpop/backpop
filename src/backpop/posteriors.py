@@ -51,11 +51,22 @@ class BackPopsteriors():
         self.bpp = None
         self.kick_info = None
         self.bcm_row = None
-        
+
+        self.bpp_columns = BPP_COLUMNS
+        self.bcm_columns = BCM_COLUMNS
+
+        # check if bpp_columns is valid (cannot be None or "none" or "None" or "", should be a list or array of column names)
         if bpp_columns is not None:
-            self.bpp_columns = bpp_columns
+            if not isinstance(bpp_columns, (list, np.ndarray)):
+                raise ValueError("bpp_columns must be a list or array of column names.")
+            else:
+                self.bpp_columns = bpp_columns
         if bcm_columns is not None:
-            self.bcm_columns = bcm_columns  
+            if not isinstance(bcm_columns, (list, np.ndarray)):
+                raise ValueError("bcm_columns must be a list or array of column names.")
+            else:
+                self.bcm_columns = bcm_columns
+
         if bpp_shape is not None:
             BPP_SHAPE = bpp_shape
 
