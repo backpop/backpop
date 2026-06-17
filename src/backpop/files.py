@@ -154,7 +154,7 @@ def parse_inifile(ini_file):
     else:
         config["bpp_columns"] = BPP_COLUMNS
         
-    if config["use_bcm"] == "true":
+    if config["use_bcm"]:
         if config["bcm_columns"] != "" and config["bcm_columns"].lower() != "none":
             # check bcm_columns names are found in BCM_COLUMNS
             config["bcm_columns"] = ast.literal_eval(config["bcm_columns"])

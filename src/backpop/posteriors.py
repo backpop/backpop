@@ -51,11 +51,31 @@ class BackPopsteriors():
         self.bpp = None
         self.kick_info = None
         self.bcm_row = None
-        
-        if bpp_columns is not None:
+
+        # either use default bpp columns or check provided columns are valid
+        if bpp_columns is None or bpp_columns == "" or bpp_columns == "none" or bpp_columns == "None":
+            self.bpp_columns = BPP_COLUMNS
+        elif not isinstance(bpp_columns, (list, np.ndarray)):
+            raise ValueError("bpp_columns must be a list or array of column names or None")
+        else:
+            for col in bpp_columns:
+                if col not in BPP_COLUMNS:
+                    raise ValueError(f'Invalid column name: {col}. '
+                                     f'Not found in BPP columns: {BPP_COLUMNS}')
             self.bpp_columns = bpp_columns
-        if bcm_columns is not None:
-            self.bcm_columns = bcm_columns  
+
+        # same for bcm columns
+        if bcm_columns is None or bcm_columns == "" or bcm_columns == "none" or bcm_columns == "None":
+            self.bcm_columns = BCM_COLUMNS
+        elif not isinstance(bcm_columns, (list, np.ndarray)):
+            raise ValueError("bcm_columns must be a list or array of column names or None")
+        else:
+            for col in bcm_columns:
+                if col not in BCM_COLUMNS:
+                    raise ValueError(f'Invalid column name: {col}. '
+                                     f'Not found in BCM columns: {BCM_COLUMNS}')
+            self.bcm_columns = bcm_columns
+
         if bpp_shape is not None:
             BPP_SHAPE = bpp_shape
 
