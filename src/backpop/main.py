@@ -85,8 +85,6 @@ class BackPop():
         self.prior = Prior()
         for i in range(len(self.var["name"])):
             self.prior.add_parameter(self.var["name"][i], dist=(self.var["min"][i], self.var["max"][i]))
-            
-        self.BPP_SHAPE = (self.config["n_bpp_rows"], len(BPP_COLUMNS))
         
     
     def run_sampler(self):
@@ -109,13 +107,15 @@ class BackPop():
         BPP_FLAT_LENGTH = self.config["n_bpp_rows"] * len(self.config["bpp_columns"])
         KICK_INFO_FLAT_LENGTH = np.prod(KICK_SHAPE)
         BCM_ROW_FLAT_LENGTH = len(self.config["bcm_columns"]) + len(EXTRA_PHASE_TABLE_COLS)
+        BLOB_LENGTH = BPP_FLAT_LENGTH + KICK_INFO_FLAT_LENGTH + BCM_ROW_FLAT_LENGTH
+        self.INVALID_LIKELIHOOD = (-np.inf, np.full(BLOB_LENGTH, np.nan, dtype=float))
             
         self.sampler = Sampler(
             prior=self.prior, 
             likelihood=self.likelihood, 
             n_live=self.config["n_live"], 
             pool=self.config["n_threads"],
-            blobs_dtype=('blob', float, BPP_FLAT_LENGTH + KICK_INFO_FLAT_LENGTH + BCM_ROW_FLAT_LENGTH),
+            blobs_dtype=('blob', float, BLOB_LENGTH),
             filepath=filepath, 
             resume=self.config["resume"]
         )
@@ -177,24 +177,17 @@ class BackPop():
         kick_flat : :class:`~numpy.ndarray`
             Flattened array of the full kick info output from COSMIC
         '''
-        INVALID = (
-            -np.inf,
-            np.full(len(self.bpp_columns) * self.config["n_bpp_rows"], np.nan, dtype=float),
-            np.full(np.prod(KICK_SHAPE), np.nan, dtype=float),
-            np.full(len(self.bpp_columns) + len(EXTRA_PHASE_TABLE_COLS), np.nan, dtype=float)
-        )
-        
         # ensure that if m1 and m2 are both provided, m1 >= m2
         if "m1" in x and "m2" in x:
             if x["m1"] < x["m2"]:
-                return INVALID
+                return self.INVALID_LIKELIHOOD
 
         # enforce limits on physical values
         # TODO: check with Katie if this is necessary with Nautilus priors
         for i, name in enumerate(x):
             val = x[name]
             if val < self.var["min"][i] or val > self.var["max"][i]:
-                return INVALID
+                return self.INVALID_LIKELIHOOD
 
         # turn sampled log-parameters back into linear space if necessary
         for i, name in enumerate(x):
@@ -206,7 +199,7 @@ class BackPop():
 
         # check result and calculate likelihood
         if result[0] is None:
-            return INVALID
+            return self.INVALID_LIKELIHOOD
 
         # apply log values to observed parameters if necessary
         for i, name in enumerate(self.obs["name"]):
