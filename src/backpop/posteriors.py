@@ -161,7 +161,7 @@ class BackPopsteriors():
         self.bpp.to_hdf(file, key='bpp')
         self.kick_info.to_hdf(file, key='kick_info')
 
-        # save bcm only if use_bcm = True
-        if np.all(self.bcm_row['tphys']) != 0: 
+        # save bcm only when it contains non-zero entries, to save space and avoid confusion
+        if np.any(self.bcm_row['tphys'] != 0): 
             self.bcm_row.to_hdf(file, key='bcm_row')
 
