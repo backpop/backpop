@@ -85,6 +85,12 @@ class BackPop():
         self.prior = Prior()
         for i in range(len(self.var["name"])):
             self.prior.add_parameter(self.var["name"][i], dist=(self.var["min"][i], self.var["max"][i]))
+
+        self.BPP_FLAT_LENGTH = self.config["n_bpp_rows"] * len(self.config["bpp_columns"])
+        self.KICK_INFO_FLAT_LENGTH = np.prod(KICK_SHAPE)
+        self.BCM_ROW_FLAT_LENGTH = len(self.config["bcm_columns"]) + len(EXTRA_PHASE_TABLE_COLS)
+        self.BLOB_LENGTH = self.BPP_FLAT_LENGTH + self.KICK_INFO_FLAT_LENGTH + self.BCM_ROW_FLAT_LENGTH
+        self.INVALID_LIKELIHOOD = (-np.inf, np.full(self.BLOB_LENGTH, np.nan, dtype=float))
         
     
     def run_sampler(self):
@@ -103,19 +109,13 @@ class BackPop():
                 if self.config["verbose"]:
                     print(f"Created output folder here: {output_path}")
             filepath = os.path.join(output_path, 'samples_out.hdf5')
-
-        BPP_FLAT_LENGTH = self.config["n_bpp_rows"] * len(self.config["bpp_columns"])
-        KICK_INFO_FLAT_LENGTH = np.prod(KICK_SHAPE)
-        BCM_ROW_FLAT_LENGTH = len(self.config["bcm_columns"]) + len(EXTRA_PHASE_TABLE_COLS)
-        BLOB_LENGTH = BPP_FLAT_LENGTH + KICK_INFO_FLAT_LENGTH + BCM_ROW_FLAT_LENGTH
-        self.INVALID_LIKELIHOOD = (-np.inf, np.full(BLOB_LENGTH, np.nan, dtype=float))
             
         self.sampler = Sampler(
             prior=self.prior, 
             likelihood=self.likelihood, 
             n_live=self.config["n_live"], 
             pool=self.config["n_threads"],
-            blobs_dtype=('blob', float, BLOB_LENGTH),
+            blobs_dtype=('blob', float, self.BLOB_LENGTH),
             filepath=filepath, 
             resume=self.config["resume"]
         )
@@ -125,9 +125,9 @@ class BackPop():
         points, log_w, log_l, blobs = self.sampler.posterior(return_blobs=True)
 
         # get back the flat arrays
-        bpp_flat = blobs["blob"][:, :BPP_FLAT_LENGTH]
-        kick_flat = blobs["blob"][:, BPP_FLAT_LENGTH:BPP_FLAT_LENGTH + KICK_INFO_FLAT_LENGTH]
-        bcm_flat  = blobs["blob"][:, BPP_FLAT_LENGTH + KICK_INFO_FLAT_LENGTH:]
+        bpp_flat = blobs["blob"][:, :self.BPP_FLAT_LENGTH]
+        kick_flat = blobs["blob"][:, self.BPP_FLAT_LENGTH:self.BPP_FLAT_LENGTH + self.KICK_INFO_FLAT_LENGTH]
+        bcm_flat  = blobs["blob"][:, self.BPP_FLAT_LENGTH + self.KICK_INFO_FLAT_LENGTH:]
         del blobs
 
         bpp = pd.DataFrame(bpp_flat.reshape(-1, len(self.config["bpp_columns"])), columns=self.config["bpp_columns"])
