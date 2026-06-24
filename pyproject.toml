@@ -64,7 +64,7 @@ docs = [
 
 
 [project.urls]
-"Repository" = "https://github.com/TomWagg/backpop"
+"Repository" = "https://github.com/backpop/backpop"
 
 [project.scripts]
 backpop = "backpop.cli:main"
