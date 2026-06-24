@@ -68,3 +68,7 @@ docs = [
 
 [project.scripts]
 backpop = "backpop.cli:main"
+
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

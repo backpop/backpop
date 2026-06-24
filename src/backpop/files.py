@@ -138,38 +138,23 @@ def parse_inifile(ini_file):
     #                         'Your observational means are '
     #                         f'm1 = {config_dict["backpop.obs::m1"]["mean"]} and m2 = {config_dict["backpop.obs::m2"]["mean"]}.')
     
-    if config["bpp_columns"] != "" and config["bpp_columns"].lower() != "none":
-        config["bpp_columns"] = ast.literal_eval(config["bpp_columns"])
-        # check bpp_columns names are found in BPP_COLUMNS
-        for k in config["bpp_columns"]:
-            if k not in BPP_COLUMNS:
-                raise ValueError(f'Invalid column name: {k}. '
-                                 f'Not found in BPP columns: {BPP_COLUMNS}')
-
-        # check bpp_columns includes observables
-        for k in obs["out_name"]:
-            if k not in config["bpp_columns"]:
-                raise ValueError(f'Missing column: {k}. You must provide BPP column names '
-                                 f'that match observables: {obs["out_name"]}')
-    else:
-        config["bpp_columns"] = BPP_COLUMNS
-        
-    if config["use_bcm"]:
-        if config["bcm_columns"] != "" and config["bcm_columns"].lower() != "none":
-            # check bcm_columns names are found in BCM_COLUMNS
-            config["bcm_columns"] = ast.literal_eval(config["bcm_columns"])
-            for k in config["bcm_columns"]:
-                if k not in BCM_COLUMNS:
-                    raise ValueError(f'Invalid column name: {k}. '
-                                     f'Not found in BCM columns: {BCM_COLUMNS}')
-
-            # check bcm_columns includes observables
-            for k in obs["out_name"]:
-                if k not in config["bcm_columns"]:
-                    raise ValueError(f'Missing column: {k}. You must provide BCM column names '
+    for col_key, col_defaults, col_type in [("bpp_columns", BPP_COLUMNS, "BPP"),
+                                            ("bcm_columns", BCM_COLUMNS, "BCM")]:
+        if config[col_key] != "" and config[col_key].lower() != "none":
+            config[col_key] = ast.literal_eval(config[col_key])
+            # check column names are found in the appropriate columns
+            for col in config[col_key]:
+                if col not in col_defaults:
+                    raise ValueError(f'Invalid column name: {col}. '
+                                     f'Not found in {col_type} columns: {col_defaults}')
+                
+            # check columns include observables
+            for obs_name in obs["out_name"]:
+                if obs_name not in config[col_key]:
+                    raise ValueError(f'Missing column: {obs_name}. You must provide {col_type} column names '
                                      f'that match observables: {obs["out_name"]}')
         else:
-            config["bcm_columns"] = BCM_COLUMNS
+            config[col_key] = col_defaults
     
     if config["n_bpp_rows"] != "" and config["n_bpp_rows"].lower() != "none":
         config["n_bpp_rows"] = int(config["n_bpp_rows"])

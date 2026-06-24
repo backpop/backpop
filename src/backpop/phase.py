@@ -165,11 +165,11 @@ def _parse_condition(cond: Union[str, Condition]) -> Condition:
     if ',' in value_str:
         value_str = value_str.strip('[]() ')
         value = [v.strip() for v in value_str.split(',')]
-        assert all(v.replace('.','',1).isdigit() for v in value if v), "All values must be numeric"
+        assert all(v.lstrip('-').replace('.','',1).isdigit() for v in value if v), "All values must be numeric"
         value = [float(v) if '.' in v else int(v) for v in value if v]
     else:
         value = value_str.strip()
-        if value.replace('.','',1).isdigit():
+        if value.lstrip('-').replace('.','',1).isdigit():
             value = float(value) if '.' in value else int(value)
         else:
             raise ValueError("Value must be numeric or a comma-separated list of numerics")
