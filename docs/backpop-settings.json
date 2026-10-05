@@ -390,14 +390,51 @@
             },
             {
                 "settings-section": "Metallicity",
-                "name": "metallicity value",
-                "description": "Observed (or assumed) metallicity of the binary, in absolute units (Z). Metallicity can be fixed or varied. If varied, follow the scheme as above. When using METISSE, metallicity value must match those of the stellar tracks.",
+                "name": "metallicity_mode",
+                "description": "Whether the binary's metallicity is treated as a single fixed value or as an observable to be varied/fit (with a mean and uncertainty), just like the mass, orbital period, and eccentricity observables above.",
+                "type": "dropdown",
+                "is-metallicity-mode-toggle": true,
+                "options-preface": "",
+                "options": [
+                    {
+                        "name": "fixed",
+                        "description": "Metallicity is fixed at a single assumed value.",
+                        "default": true
+                    },
+                    {
+                        "name": "variable",
+                        "description": "Metallicity is treated as an observable with a mean and sigma, and is sampled/fit like the other observables."
+                    }
+                ]
+            },
+            {
+                "name": "value",
+                "description": "Observed (or assumed) metallicity of the binary, in absolute units (Z). Only used when metallicity is fixed. When using METISSE, the metallicity value must match those of the stellar tracks.",
                 "type": "number",
                 "options-preface": "",
+                "metallicity-field": "fixed",
                 "options": [
                     {
                         "name": 0.02,
                         "description": "For example, this sets the metallicity to solar (Z = 0.02)"
+                    },
+                    {
+                        "name": 0.01,
+                        "description": "Default value",
+                        "default": true
+                    }
+                ]
+            },
+            {
+                "name": "mean",
+                "description": "Observed (or assumed) mean metallicity of the binary, in absolute units (Z). Only used when metallicity is variable. When using METISSE, this should fall within the range of the stellar tracks.",
+                "type": "number",
+                "options-preface": "",
+                "metallicity-field": "variable",
+                "options": [
+                    {
+                        "name": 0.02,
+                        "description": "For example, this sets the mean metallicity to solar (Z = 0.02)"
                     },
                     {
                         "name": "",
@@ -407,8 +444,40 @@
                 ]
             },
             {
+                "name": "sigma",
+                "description": "Uncertainty on the observed metallicity, in absolute units (Z). Only used when metallicity is variable.",
+                "type": "number",
+                "options-preface": "",
+                "metallicity-field": "variable",
+                "options": [
+                    {
+                        "name": 0.002,
+                        "description": "For example, this sets sigma to 0.002"
+                    },
+                    {
+                        "name": "",
+                        "description": "Default value",
+                        "default": true
+                    }
+                ]
+            },
+            {
+                "name": "out_name",
+                "description": "Column name used to store the metallicity observable in the output files. Only used when metallicity is variable.",
+                "type": "string",
+                "options-preface": "Must match a column name in the BPP/BCM output (see <a href='https://cosmic-popsynth.github.io/COSMIC/pages/config_and_output/output_info.html#bpp-key-evolutionary-change-table'>COSMIC docs</a>).",
+                "metallicity-field": "variable",
+                "options": [
+                    {
+                        "name": "met",
+                        "description": "Default value, matching the 'met' column",
+                        "default": true
+                    }
+                ]
+            },
+            {
                 "settings-section": "Evolution Time",
-                "name": "tphys value",
+                "name": "value",
                 "description": "Observed (or assumed) evolutionary time of the binary in Myr",
                 "type": "number",
                 "options-preface": "",
@@ -433,7 +502,7 @@
         "docs-colour": "#78B8A0",
         "settings": [
             {
-                "settings-section": "Primary Mass",
+                "settings-section": "Primary Mass Prior",
                 "name": "min",
                 "description": "Minimum allowed value of the primary mass prior, in solar masses",
                 "type": "number",
@@ -468,7 +537,7 @@
                 ]
             },
             {
-                "settings-section": "Secondary Mass",
+                "settings-section": "Secondary Mass Prior",
                 "name": "min",
                 "description": "Minimum allowed value of the secondary mass prior, in solar masses",
                 "type": "number",
@@ -503,7 +572,7 @@
                 ]
             },
             {
-                "settings-section": "Orbital Period",
+                "settings-section": "Orbital Period Prior",
                 "name": "min",
                 "description": "Minimum allowed value of the orbital period prior, in days",
                 "type": "number",
@@ -538,7 +607,7 @@
                 ]
             },
             {
-                "settings-section": "Eccentricity",
+                "settings-section": "Eccentricity Prior",
                 "name": "min",
                 "description": "Minimum allowed value of the eccentricity prior",
                 "type": "number",
@@ -571,11 +640,18 @@
                         "default": true
                     }
                 ]
+            },
+            {
+                "settings-section": "Additional Priors",
+                "add-more-priors": true,
+                "settings-section-description": "Add additional priors not listed above (e.g., natal kick magnitude and direction). Any additional prior will be included in the generated ini file as [backpop.var::prior_name].",
+                "name-placeholder": "e.g. alpha_1",
+                "add-button-label": "Additional Prior"
             }
         ]
     },
     {
-        "category": "sse", 
+        "category": "sse",
         "category_label": "Single star evolution",
         "category_description": "Settings that control the single star evolution in the simulation",
         "docs-colour": "#8FBC8F",
@@ -590,14 +666,13 @@
                         "name": "sse",
                         "description": "Use SSE for single star evolution which will apply the fitting formulae from <a href='https://ui.adsabs.harvard.edu/abs/2000MNRAS.315..543H/abstract'>Hurley+2000</a> for the single star evolution",
                         "default": true
-
                     },
                     {
                         "name": "metisse",
                         "description": "Use METISSE for single star evolution, must supply <code>path_to_tracks</code> and <code>path_to_he_tracks</code>"
                     }
                 ]
-            }, 
+            },
             {
                 "name": "path_to_tracks",
                 "description": "Path to the METISSE tracks for single star evolution. Must be supplied if <code>stellar_engine</code> is set to <code>metisse</code>",

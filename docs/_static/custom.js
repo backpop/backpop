@@ -38,11 +38,3 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
 });
-
-document.querySelectorAll(".options-expander").forEach(function (el) {
-  el.addEventListener("click", function () {
-    el.classList.toggle("active");
-    var target = el.nextElementSibling; // adjust to however it's actually linked
-    target.classList.toggle("hide");
-  });
-});

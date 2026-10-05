@@ -18,9 +18,6 @@ document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll(".options-expander").forEach(expander => {
         expander.addEventListener("click", function() {
             expander.parentElement.querySelector(".options").classList.toggle("hide");
-            // select the icon directly rather than by a specific Font Awesome
-            // class - FA6 uses "fa-solid"/"fa-regular" etc. instead of a bare
-            // "fa" class, so ".fa" never matched anything here
             const icon = expander.querySelector("i");
             if (icon) {
                 icon.classList.toggle("fa-chevron-down");
@@ -62,8 +59,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (!matching_card) continue;
 
         // only that card's own subsections (not every subsection on the page)
-        // NOTE: matches h3 too - the generated markup currently uses <h3>
-        // for these subsection headings, see construct_files() below
+        // NOTE: matches h3 too
         const subheadings = matching_card.querySelectorAll(".settings-section h2, .settings-section h3");
         if (subheadings.length == 0) continue;
 
@@ -94,46 +90,13 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-    document.querySelectorAll(".setting-chooser").forEach(chooser => {
-        const nameEl = chooser.querySelector(".col-9 h3.name");
-        // some .setting-chooser elements may not have the expected h3.name
-        // markup (e.g. malformed/partial generation) - skip instead of
-        // crashing, which would otherwise halt every listener registered
-        // after this point, including the final construct_files() call
-        if (!nameEl) return;
-        if (nameEl.innerText == "sampling_method") {
-            chooser.querySelector(".form-control").addEventListener("change", function() {
-
-                // find the relevant settings to show/hide based on the sampling method
-                const setting_names = ["primary_model", "porb_model", "ecc_model",
-                                       "qmin", "m2_min", "binfrac_model"];
-
-                // get the elements that match these names
-                const all_sampling_settings = this.parentElement.parentElement.parentElement.parentElement.children;
-                let relevant_settings = [];
-                console.log(all_sampling_settings)
-                for (let setting of all_sampling_settings) {
-                    console.log(setting.querySelector(".name"))
-                    if (setting_names.includes(setting.querySelector(".name").innerText)) {
-                        relevant_settings.push(setting);
-                    }
-                }
-
-                // show settings
-                if (this.value == "independent") {
-                    for (let setting of relevant_settings) {
-                        setting.classList.remove("hide-me");
-                    }
-                }
-                // hide settings
-                else if (this.value == "multidim") {
-                    for (let setting of relevant_settings) {
-                        setting.classList.add("hide-me");
-                    }
-                }
-            })
-        }
-    });
+    // wire up the metallicity fixed/variable toggle FIRST, so that when it fires
+    // it has already shown/hidden (and enabled/disabled) the right fields before
+    // the generic ".form-control" listener below re-builds the ini file preview
+    const metallicity_toggle = document.getElementById("metallicity-mode-toggle");
+    if (metallicity_toggle) {
+        metallicity_toggle.addEventListener("change", apply_metallicity_mode);
+    }
 
     // reconstruct the interactive files any time any input changes
     document.querySelectorAll(".form-control").forEach(input => {
@@ -142,6 +105,26 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
+    // wire up the "include in output" toggle for each observable/prior section:
+    // flipping it off disables (and grays out) all inputs in that section and
+    // drops them from the generated ini file, flipping it back on restores them
+    document.querySelectorAll(".section-enable-toggle").forEach(toggle => {
+        toggle.addEventListener("change", function() {
+            const section = toggle.dataset.section;
+            document.querySelectorAll(`.setting[data-section="${section}"]`).forEach(settingEl => {
+                settingEl.classList.toggle("section-disabled", !toggle.checked);
+                settingEl.querySelectorAll("input, select").forEach(input => {
+                    input.disabled = !toggle.checked;
+                });
+            });
+            construct_files();
+        });
+    });
+
+    // wire up the "add more priors" affordance at the end of the Priors category,
+    // letting users append an unlimited number of custom priors (name + min + max)
+    setup_custom_priors();
+
     // setup the toggle button for including comments in the ini file
     document.getElementById("ini-file-comments").addEventListener("click", function() {
         this.classList.toggle("active");
@@ -149,10 +132,137 @@ document.addEventListener("DOMContentLoaded", function() {
         construct_files();
     });
 
+    // make sure only the fixed- or variable-mode metallicity fields are active
+    // before the very first ini file is built
+    apply_metallicity_mode();
+
     // construct the files once everything is loaded in
     construct_files();
 });
 
+
+// Metallicity in Observables can be set up as either a single fixed value or as
+// a variable observable (mean/sigma/out_name, like mass/period/eccentricity).
+// This shows/enables whichever set of fields matches the toggle's current value
+// and hides/disables (so it's skipped when building the ini file) the other set.
+function apply_metallicity_mode() {
+    const toggle = document.getElementById("metallicity-mode-toggle");
+    if (!toggle) return;
+
+    const mode = toggle.value; // "fixed" or "variable"
+    document.querySelectorAll("[data-metallicity-field]").forEach(settingEl => {
+        const active = settingEl.dataset.metallicityField === mode;
+        settingEl.classList.toggle("section-disabled", !active);
+        settingEl.querySelectorAll("input, select").forEach(input => {
+            input.disabled = !active;
+        });
+    });
+}
+
+
+function setup_custom_priors() {
+    const addBtn = document.getElementById("add-custom-prior-btn");
+    const template = document.getElementById("custom-prior-template");
+    const list = document.getElementById("custom-priors-list");
+    if (!addBtn || !template || !list) return;
+
+    addBtn.addEventListener("click", function() {
+        const row = template.content.firstElementChild.cloneNode(true);
+
+        // any edit to the name/min/max should refresh the ini preview
+        row.querySelectorAll(".custom-prior-input").forEach(input => {
+            input.addEventListener("input", construct_files);
+        });
+
+        // let the user remove a prior they added by mistake
+        row.querySelector(".remove-custom-prior").addEventListener("click", function() {
+            row.remove();
+            construct_files();
+        });
+
+        list.appendChild(row);
+        row.querySelector(".custom-prior-name").focus();
+        construct_files();
+    });
+}
+
+// maps a settings-section title to BackPop/COSMIC's short internal parameter
+// code used in the ini section header, e.g. [backpop.obs::m1]. Mirrors
+// SECTION_CODE in create_params_ini.py so the live preview here always
+// matches what that script would generate from the same choices.
+const SECTION_CODE = {
+    "Primary Mass": "m1",
+    "Secondary Mass": "m2",
+    "Orbital Period": "tb",
+    "Eccentricity": "e",
+    "Metallicity": "metallicity",
+    "Evolution Time": "tphys",
+};
+
+// 'settings' is rendered as a single flat [backpop] section (renamed from
+// its JSON category name) rather than literally "[settings]"
+const CATEGORY_INI_NAME = { "settings": "backpop" };
+
+function section_code(title) {
+    // priors sections are titled e.g. "Primary Mass Prior" - strip that
+    // suffix before looking the title up so they match their observable
+    // counterpart's code (both end up as "m1")
+    let base_title = title.endsWith(" Prior") ? title.slice(0, -" Prior".length) : title;
+    if (SECTION_CODE.hasOwnProperty(base_title)) return SECTION_CODE[base_title];
+    return base_title.toLowerCase().replaceAll(" ", "_");
+}
+
+// render one form control's comment block (if requested) plus its
+// "name = value" ini line
+function render_setting_line(el, include_comments) {
+    const full_setting = el.closest(".setting");
+    if (!full_setting) return "";
+
+    let line = "";
+    if (include_comments) {
+        line += `<span class="c1">\n; ${full_setting.querySelector(".name").innerText}\n</span>`;
+
+        const description = full_setting.querySelector(".description").innerText.replaceAll('\n', '');
+        line += `<span class="c1">; ${description}\n</span>`;
+
+        const options_preface = full_setting.querySelector(".options-preface");
+        if (options_preface && options_preface.innerText != "") {
+            line += `<span class='c1'>; ${options_preface.innerText.replaceAll('\n', '')}\n</span>`;
+        }
+
+        const options = full_setting.querySelectorAll("li");
+        if (options.length > 0) {
+            line += "<span class='c1'>; Options: \n";
+            for (let option of options) {
+                line += `<span class='c1'>;    ${option.innerText.replaceAll('\n', '')}\n`;
+            }
+            line += "</span>";
+        }
+
+        const default_value = full_setting.querySelector(".default").innerText;
+        line += `<span class="c1">; ${default_value}\n</span>`;
+    }
+
+    const label = full_setting.querySelector(".name").innerText;
+    const value = el.value;
+    line += `<span class="na">${label}</span><span class="na"> = </span><span class="s">${value}\n</span>`;
+    return line;
+}
+
+// is this .setting (or its enclosing section) currently switched off, either
+// via its section's "Add to INI" toggle or (for metallicity) the fixed/variable
+// mode toggle? if so it should be left out of the generated ini file entirely
+function setting_is_active(el) {
+    if (el.disabled) return false;
+
+    const full_setting = el.closest(".setting");
+    const sectionId = full_setting ? full_setting.dataset.section : null;
+    if (sectionId) {
+        const toggle = document.querySelector(`.section-enable-toggle[data-section="${sectionId}"]`);
+        if (toggle && !toggle.checked) return false;
+    }
+    return true;
+}
 
 function construct_files() {
     // construct the strings for the INI file
@@ -162,66 +272,116 @@ function construct_files() {
     // whether the user wanted to include comments
     const include_comments = document.getElementById("ini-file-comments").classList.contains("active");
 
-    // go through every single input on the page
-    const els = document.querySelectorAll(".setting-card, .settings-section, .form-control");
-    for (let el of els) {
-        if (el.classList.contains("setting-card")) {
-            // track once you reach BSE settings
-            if (el.getAttribute("data-category") == "bse") {
-                reached_bse = true;
-            }
-            ini_file += `<span class='k'>\n[${el.getAttribute("data-category")}]\n</span>`;
-        } else if (el.classList.contains("settings-section")) {
-            // add any subheadings (e.g. "Stellar Winds")
-            // NOTE: the generated markup currently uses <h3> for these
-            // subsection headings (not <h2> as the original template
-            // implied) - matching both here so this keeps working if that
-            // ever changes back
-            const heading = el.querySelector("h2, h3");
-            if (!heading) continue;
-            subheading = heading.innerText;
-            ini_file += '<span class="c1">\n;;;;' + ';'.repeat(subheading.length) + ';;;;\n</span>';
-            ini_file += `<span class="c1">;;; ${subheading} ;;;\n</span>`;
-            ini_file += '<span class="c1">;;;;' + ';'.repeat(subheading.length) + ';;;;\n</span>';
-        } else if (el.classList.contains("form-control")) {
-            const full_setting = el.parentElement.parentElement.parentElement;
-            // add the comments if the user wants them
-            if (include_comments) {
-                ini_file += `<span class="c1">\n; ${full_setting.querySelector(".name").innerText}\n</span>`;
+    // NOTE: create_settings_html.py does NOT nest each .setting div inside its
+    // .settings-section - they're siblings in document order (the
+    // .settings-section element is really just the subsection heading/toggle).
+    // So we walk the page in flat document order, same as the original
+    // implementation, but buffer up each chunk's lines so we can wrap them in
+    // the right VFTS243-style bracket header (e.g. [backpop.obs::m1]) once we
+    // know whether that chunk turned out to have anything in it.
+    let current_category = null;       // "settings" | "sse" | "observables" | "priors"
+    let current_section_title = null;  // e.g. "Primary Mass", or null for a flat category
+    let section_lines = "";            // ini lines buffered for the chunk currently being built
+    let section_has_out_name = false;  // did an active out_name field turn up in this chunk?
+    let section_included = true;       // false if this chunk's "Add to INI" toggle is switched off
 
-                // include the description as a comment
-                description = full_setting.querySelector(".description").innerText.replaceAll('\n', '');
-                ini_file += `<span class="c1">; ${description}\n</span>`;
-
-                // include the options-preface as a comment
-                options_preface = full_setting.querySelector(".options-preface");
-                if (options_preface && options_preface.innerText != "") {
-                    ini_file += `<span class='c1'>; ${options_preface.innerText.replaceAll('\n', '')}\n</span>`;
-                }
-
-                // include the options as a comment
-                options = full_setting.querySelectorAll("li");
-                if (options.length > 0) {
-                    ini_file += "<span class='c1'>; Options: \n";
-                    for (let option of options) {
-                        ini_file += `<span class='c1'>;    ${option.innerText.replaceAll('\n', '')}\n`;
-                    }
-                    ini_file += "</span>";
-                }
-
-                // include the default value as a comment
-                default_value = full_setting.querySelector(".default").innerText;
-                ini_file += `<span class="c1">; ${default_value}\n</span>`;
-            }
-
-            // add the settings to the ini file
-            label = full_setting.querySelector(".name").innerText;
-            value = el.value;
-            ini_file += `<span class="na">${label}</span><span class="na"> = </span><span class="s">${value}\n</span>`;
-
+    // emit whatever's buffered for the current chunk (category or settings-section)
+    // under its bracket header, then reset the buffer for the next chunk
+    function flush() {
+        if (!section_included || section_lines === "") {
+            section_lines = "";
+            return;
         }
+
+        let header;
+        if (current_section_title === null) {
+            // flat category chunk: "settings" -> [backpop], "sse" -> [sse]
+            const bracket = CATEGORY_INI_NAME.hasOwnProperty(current_category) ? CATEGORY_INI_NAME[current_category] : current_category;
+            header = bracket;
+        } else {
+            const code = section_code(current_section_title);
+            let prefix = "var";
+            if (current_category === "observables") {
+                prefix = section_has_out_name ? "obs" : "fixed";
+            }
+            header = `backpop.${prefix}::${code}`;
+        }
+
+        ini_file += `<span class='k'>\n[${header}]\n</span>` + section_lines;
+        section_lines = "";
     }
 
+    document.querySelectorAll(".setting-card, .settings-section, .form-control").forEach(el => {
+        if (el.classList.contains("setting-card")) {
+            flush();
+            current_category = el.getAttribute("data-category");
+            current_section_title = null;
+            section_has_out_name = false;
+            section_included = true;
+        } else if (el.classList.contains("settings-section")) {
+            flush();
+            const sectionId = el.dataset.section;
+            const heading = el.querySelector("h2, h3");
+            current_section_title = heading ? heading.innerText : null;
+            section_has_out_name = false;
+
+            const toggle = document.querySelector(`.section-enable-toggle[data-section="${sectionId}"]`);
+            section_included = !(toggle && !toggle.checked);
+
+            // the "Additional Priors" pseudo-section holds no fields of its own -
+            // it just houses the user-added custom-prior rows, each of which gets
+            // its own [backpop.var::<name>] section, written straight to ini_file
+            // (bypassing the buffer, since each row is its own bracket header)
+            if (sectionId === "additional-priors") {
+                document.querySelectorAll(".custom-prior-row").forEach(row => {
+                    const name = row.querySelector(".custom-prior-name").value.trim();
+                    if (!name) return; // skip rows the user hasn't named yet
+
+                    const minVal = row.querySelector(".custom-prior-min").value;
+                    const maxVal = row.querySelector(".custom-prior-max").value;
+                    const code = name.toLowerCase().replaceAll(" ", "_");
+
+                    ini_file += `<span class="k">\n[backpop.var::${code}]\n</span>`;
+                    if (include_comments) {
+                        ini_file += `<span class="c1">; User-added prior\n</span>`;
+                    }
+                    ini_file += `<span class="na">min</span><span class="na"> = </span><span class="s">${minVal}\n</span>`;
+                    ini_file += `<span class="na">max</span><span class="na"> = </span><span class="s">${maxVal}\n</span>`;
+                });
+                section_included = false; // nothing left to flush for this pseudo-section
+            }
+        } else if (el.classList.contains("form-control")) {
+            // custom priors are handled above, right when we hit the "Additional
+            // Priors" settings-section marker - skip them here
+            if (el.classList.contains("custom-prior-input")) return;
+
+            // the metallicity fixed/variable toggle itself is never written into
+            // the ini file - only whichever value/mean/sigma/out_name fields it
+            // switches on
+            if (el.id === "metallicity-mode-toggle") return;
+
+            if (!setting_is_active(el)) return;
+
+            const full_setting = el.closest(".setting");
+            const label = full_setting.querySelector(".name").innerText;
+            if (label === "out_name") section_has_out_name = true;
+
+            section_lines += render_setting_line(el, include_comments);
+        }
+    });
+    flush(); // flush the final chunk
+
     // update the actual values on the page with the constructed strings
-    document.querySelector("#ini-file .highlight-ini pre").innerHTML = ini_file;
+    //
+    // NOTE: this used to select "#ini-file .highlight-ini pre", but
+    // "ini-file" is the id Sphinx auto-assigns to the "INI file" <h2>
+    // heading above (for the TOC anchor), and the code block is a sibling
+    // of that heading rather than a child of it, so that selector always
+    // matched nothing. The code block is now wrapped in its own
+    // "#ini-file-output" container (see config.rst) so it can actually be
+    // found and updated here.
+    const ini_pre = document.querySelector("#ini-file-output .highlight-ini pre");
+    if (ini_pre) {
+        ini_pre.innerHTML = ini_file;
+    }
 }

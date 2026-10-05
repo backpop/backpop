@@ -13,80 +13,10 @@
     --header-size: 42px;          
     --subheader-size: 30px;
     --subsubheader-size: 22px;
+    --sidebar-size: 18px;
     --text-size: 16px;   
     --code-size: 14px;
 }
-
-/* ############################## */
-/* content */
-/* ############################## */
-
-.content {
-    width: 80%;
-    overflow: scroll;
-    background-color: var(--color-background-primary);
-}
-
-/* ############################## */
-/* footer */
-/* ############################## */
-
-footer {
-    font-size: var(--text-size);
-    margin-top: 5px;
-    justify-content: space-between;
-}
-
-/* ############################## */
-/* sidebar */
-/* ############################## */
-
-.sidebar-drawer {
-    width: 20%;
-    font-size: var(--text-size);
-}
-
-.sidebar-logo {
-    display: block;
-    margin: 0 auto;
-    max-width: 50%;
-}
-
-.gif-logo {
-    cursor: pointer;
-}
-
-.sidebar-brand-text {
-    text-align: center!important;
-    font-size: var(--subsubheader-size)!important;
-}
-
-.sidebar-tree .reference {
-    font-size: var(--text-size);
-}
-
-/* ############################## */
-/* toc */
-/* ############################## */
-
-.toc-drawer {
-    font-size: var(--subsubheader-size);
-}
-
-.toctree-wrapper.compound .caption {
-    font-size: 20px;
-    font-weight: bold;
-}
-    
-/* .toctree-wrapper.compound .caption{
-    font-size: var(--text-size);
-    font-weight: bold;
-} */
-
-/* .toc-tree li.scroll-current>.reference {
-    color: var(--backpop-secondary);
-    font-weight: 700;
-} */
 
 /* ############################## */
 /* headers & text */
@@ -106,24 +36,116 @@ h3 {
 }
 
 h4 {
-    font-size: 18px;
+     font-size: var(--sidebar-size);
 }
 
-p, ul {
+p {
     font-size: var(--text-size);
 }
 
-code, kbd {
+code {
     font-size: var(--code-size);
+    font-feature-settings: "kern";
+    font-family: var(--md-code-font-family);
 }
 
 pre {
-    font-size: var(--code-size);
-    background: rgba(218, 191, 205, 0.487);
+    border-radius: 5px;
+    background-color: #dabfcd7c;
 }
 
-.center {
-    text-align: center;
+/* ############################## */
+/* content */
+/* ############################## */
+
+.content {
+    width: 80%;
+    overflow: scroll;
+    background-color: var(--color-background-primary);
+}
+
+.main {
+    min-width: 0;
+    background-color: var(--color-background-primary);
+}
+
+/* ############################## */
+/* nbsphinx (jupyter notebook pages) */
+/* ############################## */
+
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    min-width: 0;
+    border: none;
+}
+
+div.rendered_html table {
+    overflow-x: auto;
+}
+
+div.nboutput.container div.output_area div[class*=highlight] > pre {
+    font-size: var(--code-size);
+}
+
+div.highlight {
+    font-size: var(--text-size);
+}
+
+/* ############################## */
+/* footer */
+/* ############################## */
+
+footer {
+    font-size: var(--text-size);
+    margin-top: 5px;
+    justify-content: space-between;
+}
+
+/* ############################## */
+/* sidebar */
+/* ############################## */
+
+.sidebar-drawer {
+    width: 20%;
+    font-size: var(--sidebar-size);
+}
+
+.sidebar-logo {
+    display: block;
+    margin: 0 auto;
+    max-width: 50%;
+}
+
+.gif-logo {
+    cursor: pointer;
+}
+
+.sidebar-brand-text {
+    text-align: center!important;
+    font-size: var(--subsubheader-size)!important;
+}
+
+/* ############################## */
+/* toc */
+/* ############################## */
+
+.toc-drawer {
+    font-size: var(--text-size);
+    background-color: var(--color-background-primary);
+}
+    
+.toc-tree li.scroll-current>.reference {
+    color: var(--backpop-secondary);
+    font-weight: 700;
+}
+
+.toctree-wrapper.compound>ul {
+    font-size: var(--text-size);
+}
+
+.toctree-wrapper.compound .caption {
+    font-size: var(--sidebar-size);
+    font-weight: bold;
 }
 
 /* #################### */
@@ -183,6 +205,10 @@ pre {
     padding: 0; /* remove default heading padding */
 }
 
+.card.setting-card .card-body {
+    padding: 1rem; /* inner padding for card content area */
+}
+
 /* ############################## */
 /* ini settings */
 /* ############################## */
@@ -193,10 +219,6 @@ pre {
 .setting-group-description {
     margin: 0;  /* remove default paragraph margin */
     padding: 0; /* remove default paragraph padding */
-}
-
-.card.setting-card .card-body {
-    padding: 1rem; /* inner padding for card content area */
 }
 
 /* ############################## */
@@ -212,7 +234,7 @@ pre {
 }
 
 .setting-chooser .name-cont code {
-    font-size: var(--subsubheader-size);
+    font-size: 20px;
 }
 
 .setting-chooser .name {
@@ -386,19 +408,6 @@ select.form-control {
 /* ############################## */
 .link-white {
     color: white!important; /* force white text on colored backgrounds */
-}
-
-/* ############################## */
-/* jupyter card layout */
-/* ############################## */
-
-.content:has(.nbinput),
-.content:has(.nboutput) {
-    width: 50%;
-}
-
-div.nboutput.container div.output_area div[class*=highlight] > pre {
-    font-size: var(--code-size);
 }
 
 /* ############################## */

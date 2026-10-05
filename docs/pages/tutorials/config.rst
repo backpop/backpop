@@ -45,6 +45,12 @@ Main Settings
 .. raw:: html
     :file: ../../_generated/config_insert_settings.html
 
+Single star evolution
+~~~~~~~~~~~~~~~~~~~~~
+
+.. raw:: html
+    :file: ../../_generated/config_insert_sse.html
+
 Observables
 ~~~~~~~~~~~
 
@@ -57,13 +63,6 @@ Priors
 .. raw:: html
     :file: ../../_generated/config_insert_priors.html
 
-SSE Dictionary
-~~~~~~~~~~~~~~
-
-.. raw:: html
-    :file: ../../_generated/config_insert_sse.html
-
-
 INI file
 =========
  
@@ -72,6 +71,7 @@ Use the button below to toggle whether to include explanatory comments in the IN
 .. raw:: html
  
     <button id="ini-file-comments" type="button" class="btn btn-toggle">Show comments</button>
+    <div id="ini-file-output">
  
 .. code-block:: ini
  
@@ -79,11 +79,8 @@ Use the button below to toggle whether to include explanatory comments in the IN
  
 .. raw:: html
  
+    </div>
     <div id="hide-this-maths">
- 
-.. math::
- 
-    x = y
  
 .. raw:: html
  

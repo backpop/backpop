@@ -16,6 +16,5 @@ Here we have a number of detailed tutorials to walk you through using BackPop in
 
 .. toctree::
    :maxdepth: 1
-
-   tutorials/SSE.ipynb
+   
    tutorials/METISSE.ipynb

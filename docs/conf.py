@@ -55,7 +55,6 @@ extensions = [
     'sphinx_togglebutton'
 ]
 
-
 intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
                        'matplotlib': ('https://matplotlib.org/stable', None),
                        'numpy': ('https://numpy.org/doc/stable/', None),
@@ -103,6 +102,8 @@ html_theme = 'furo'
 html_logo = '_static/custom.js'
 html_title = f'BackPop v{backpop_version}'
 
+pygments_dark_style = "monokai"
+
 html_theme_options = {
     "source_repository": "https://github.com/backpop/backpop",
     "source_branch": "main",
@@ -121,7 +122,6 @@ html_theme_options = {
         "color-api-name": "#0070c0",
         "color-api-pre-name": "#0070c0"
     },
-    "sidebar_hide_name": False,
     "footer_icons": [
         {
             "name": "GitHub",
