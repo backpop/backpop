@@ -367,9 +367,9 @@ class BackPop():
                 natal_kick[param_star, NATAL_KICK_TRANSLATOR[param_name]] = params_in[param]
             # same for qcrit_arrays
             elif param in qc_list:
-                ind_dict = {}
-                for k, v in zip(qc_list, range(0,10)):
-                    ind_dict[v] = k
+                ind_dict = {k: v for v, k in enumerate(qc_list)}
+#                 for k, v in zip(qc_list, range(0,10)):
+#                     ind_dict[v] = k
                 qcrit_array[ind_dict[param]] = params_in[param]
             # otherwise just set the flag
             else:
