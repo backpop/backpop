@@ -18,7 +18,7 @@ license = {file = "LICENSE"}
 requires-python = ">=3.10"
 dependencies = [
     "scipy>=0.12.1",
-    "numpy==1.23.5",
+    "numpy>=1.23.5",
     "astropy>=1.1.1",
     "configparser",
     "tqdm>=4.0",
@@ -46,7 +46,7 @@ dependencies = [
     "sphinx-copybutton",
     "meson",
     "nautilus-sampler",
-    "cosmic-popsynth >= 4.1, < 4.2",
+    "cosmic-popsynth >= 4.1",
 ]
 
 # add optional dependencies for docs
