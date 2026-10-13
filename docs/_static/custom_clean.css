@@ -1,146 +1,156 @@
 /* ############################## */
-/* main color scheme */
+/* main scheme */
 /* ############################## */
+
 :root {
-    --backpop-primary: #1e446e;          /* dark navy blue - primary brand color */
-    --backpop-primary-darkmode: #0070c0; /* medium blue - primary color for dark mode */
-    --backpop-secondary: #0096ff;        /* bright blue - accent/secondary color */
+
+    /* color scheme */
+    --backpop-primary: #1e446e;          
+    --backpop-primary-darkmode: #0070c0; 
+    --backpop-secondary: #0096ff;
+
+    /* font size */
+    --header-size: 42px;          
+    --subheader-size: 30px;
+    --subsubheader-size: 22px;
+    --sidebar-size: 18px;
+    --text-size: 16px;   
+    --code-size: 14px;
 }
 
 /* ############################## */
-/* COSMIC iframe embed */
+/* headers & text */
 /* ############################## */
-#COSMIC-frame {
-    width: 100%;    /* full width of parent container */
-    height: 500px;  /* fixed height for embedded frame */
-    border: none;   /* remove default iframe border */
+
+h1 {
+    font-size: var(--header-size);
+    margin-bottom: 5px;
 }
 
-/* ############################## */
-/* MkDocs - header source button */
-/* ############################## */
-.md-header-nav__source {
-    width: auto !important;      /* allow natural width instead of fixed */
-    padding-right: 0 !important; /* remove right padding */
+h2 {
+     font-size: var(--subheader-size);
 }
 
-/* ############################## */
-/* MkDocs - content grid */
-/* ############################## */
-.md-grid {
-    max-width: unset !important;     /* remove default max-width constraint */
-    margin-left: 0.5rem !important;  /* small left margin */
-    margin-right: 0.5rem !important; /* small right margin */
+h3 {
+     font-size: var(--subsubheader-size);
 }
 
-/* ############################## */
-/* MkDocs - primary color overrides (indigo -> backpop-primary) */
-/* ############################## */
-button[data-md-color-primary=indigo] {
-    background-color: var(--backpop-primary) !important; /* theme picker button color */
+h4 {
+     font-size: var(--sidebar-size);
 }
 
-[data-md-color-primary=indigo] .md-typeset a {
-    color: var(--backpop-primary) !important; /* body link color in light mode */
+p {
+    font-size: var(--text-size);
 }
 
-[data-md-color-scheme=slate] .md-typeset a {
-    color: var(--backpop-primary-darkmode) !important; /* body link color in dark mode */
+code {
+    font-size: var(--code-size);
+    font-feature-settings: "kern";
+    font-family: var(--md-code-font-family);
 }
 
-[data-md-color-primary=indigo] .md-header,
-[data-md-color-primary=indigo] .md-hero {
-    background-color: var(--backpop-primary-darkmode) !important; /* header and hero background */
-}
-
-[data-md-color-primary=indigo] .md-nav__link--active,
-[data-md-color-primary=indigo] .md-nav__link:active {
-    color: var(--backpop-primary) !important; /* active nav link in light mode */
-}
-
-[data-md-color-primary=indigo][data-md-color-scheme=slate] .md-nav__link--active,
-[data-md-color-primary=indigo][data-md-color-scheme=slate] .md-nav__link:active {
-    color: var(--backpop-primary-darkmode) !important; /* active nav link in dark mode */
-}
-
-[data-md-color-primary=indigo] .md-nav__item--nested>.md-nav__link {
-    color: inherit /* nested nav items inherit parent color */
+pre {
+    border-radius: 5px;
+    background-color: #dabfcd7c;
 }
 
 /* ############################## */
-/* MkDocs - responsive nav overrides */
+/* content */
 /* ############################## */
-@media only screen and (max-width:59.9375em) {   
-    [data-md-color-primary=indigo] .md-nav__source {
-        background-color: var(--backpop-primary) !important; /* source button on mobile */
-    }
+
+.content {
+    width: 80%;
+    overflow: scroll;
+    background-color: var(--color-background-primary);
 }
 
-@media only screen and (max-width:76.1875em) {
-    html [data-md-color-primary=indigo] .md-nav--primary .md-nav__title--site {
-        background-color: var(--backpop-primary) !important; /* sidebar site title on tablet */
-    }
-}
-
-@media only screen and (min-width:76.25em) {
-    [data-md-color-primary=indigo] .md-tabs {
-        background-color: var(--backpop-primary) !important; /* top tab bar on desktop */
-    }
+.main {
+    min-width: 0;
+    background-color: var(--color-background-primary);
 }
 
 /* ############################## */
-/* MkDocs - accent color overrides (red -> backpop-secondary) */
+/* nbsphinx (jupyter notebook pages) */
 /* ############################## */
-button[data-md-color-accent=red] {
-    background-color: var(--backpop-secondary) !important; /* theme picker accent button */
+
+div.nbinput.container div.input_area,
+div.nboutput.container div.output_area {
+    min-width: 0;
+    border: none;
 }
 
-[data-md-color-accent=red] .md-typeset a:active,
-[data-md-color-accent=red] .md-typeset a:hover {
-    color: var(--backpop-secondary) !important; /* link hover/active color */
+div.rendered_html table {
+    overflow-x: auto;
 }
 
-[data-md-color-accent=red] .md-typeset .codehilite pre::-webkit-scrollbar-thumb:hover,
-[data-md-color-accent=red] .md-typeset pre code::-webkit-scrollbar-thumb:hover {
-    background-color: var(--backpop-secondary) !important; /* code block scrollbar on hover */
+div.nboutput.container div.output_area div[class*=highlight] > pre {
+    font-size: var(--code-size);
 }
 
-[data-md-color-accent=red] .md-nav__link:focus,
-[data-md-color-accent=red] .md-nav__link:hover,
-[data-md-color-accent=red] .md-typeset .footnote li:hover .footnote-backref:hover,
-[data-md-color-accent=red] .md-typeset .footnote li:target .footnote-backref,
-[data-md-color-accent=red] .md-typeset .md-clipboard:active:before,
-[data-md-color-accent=red] .md-typeset .md-clipboard:hover:before,
-[data-md-color-accent=red] .md-typeset [id] .headerlink:focus,
-[data-md-color-accent=red] .md-typeset [id]:hover .headerlink:hover,
-[data-md-color-accent=red] .md-typeset [id]:target .headerlink {
-    color: var(--backpop-secondary) !important; /* accent color for nav focus, footnotes, clipboard, and heading anchors */
-}
-
-[data-md-color-accent=red] .md-search__scrollwrap::-webkit-scrollbar-thumb:hover {
-    background-color: var(--backpop-secondary) !important; /* search panel scrollbar on hover */
-}
-
-[data-md-color-accent=red] .md-search-result__link:hover,
-[data-md-color-accent=red] .md-search-result__link[data-md-state=active] {
-    background-color: rgba(255, 23, 68, .1) /* search result hover highlight (semi-transparent) */
-}
-
-[data-md-color-accent=red] .md-sidebar__scrollwrap::-webkit-scrollbar-thumb:hover {
-    background-color: var(--backpop-secondary) !important; /* sidebar scrollbar on hover */
-}
-
-[data-md-color-accent=red] .md-source-file:hover:before {
-    background-color: var(--backpop-secondary) !important; /* source file link hover highlight */
-}
-
-.md-clipboard:focus, .md-clipboard:hover {
-    color: var(--backpop-secondary) !important; /* copy-to-clipboard button hover color */
+div.highlight {
+    font-size: var(--text-size);
 }
 
 /* ############################## */
-/* navigation grid - 2x2 block layout */
+/* footer */
 /* ############################## */
+
+footer {
+    font-size: var(--text-size);
+    margin-top: 5px;
+    justify-content: space-between;
+}
+
+/* ############################## */
+/* sidebar */
+/* ############################## */
+
+.sidebar-drawer {
+    width: 20%;
+    font-size: var(--sidebar-size);
+}
+
+.sidebar-logo {
+    display: block;
+    margin: 0 auto;
+    max-width: 50%;
+}
+
+.gif-logo {
+    cursor: pointer;
+}
+
+.sidebar-brand-text {
+    text-align: center!important;
+    font-size: var(--subsubheader-size)!important;
+}
+
+/* ############################## */
+/* toc */
+/* ############################## */
+
+.toc-drawer {
+    font-size: var(--text-size);
+    background-color: var(--color-background-primary);
+}
+    
+.toc-tree li.scroll-current>.reference {
+    color: var(--backpop-secondary);
+    font-weight: 700;
+}
+
+.toctree-wrapper.compound>ul {
+    font-size: var(--text-size);
+}
+
+.toctree-wrapper.compound .caption {
+    font-size: var(--sidebar-size);
+    font-weight: bold;
+}
+
+/* #################### */
+/* tom wagg's buttons   */
+/* #################### */
 .toms-nav-container {
     margin: 20px auto;               /* center horizontally with vertical spacing */
     width: 600px;                    /* fixed container width */
@@ -156,12 +166,12 @@ button[data-md-color-accent=red] {
 .toms-nav-container .box, .toms-nav-box {
     background-color: var(--backpop-primary); /* navy blue card background */
     padding: 20px;                   /* inner spacing */
-    border-radius: 10px;             /* rounded corners */
+    border-radius: 50px;             /* rounded corners */
     color: #ffffff;                  /* white text */
     display: flex;
     align-items: center;             /* vertically center content */
     justify-content: center;         /* horizontally center content */
-    font-size: 25px;                 /* large readable text */
+    font-size: 22px;                 /* large readable text */
     text-align: center;
     transition: 0.2s;                /* smooth animation for hover effect */
     cursor: pointer;                 /* pointer cursor on hover */
@@ -174,20 +184,13 @@ button[data-md-color-accent=red] {
 }
 
 /* ############################## */
-/* utility - text alignment */
-/* ############################## */
-.center {
-    text-align: center;
-}
-
-/* ############################## */
 /* Config page setting cards */
 /* ############################## */
 .card.setting-card {
     border-radius: 1rem;                           /* rounded card corners */
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);      /* subtle drop shadow */
-    border: 3px solid var(--color-brand-primary);  /* brand-colored border */
-    margin-bottom: 2rem;                           /* spacing between cards */
+    border: 5px solid var(--color-brand-primary);  /* brand-colored border */
+    margin-bottom: 1rem;                           /* spacing between cards */
 }
 
 .card.setting-card .card-header {
@@ -202,8 +205,12 @@ button[data-md-color-accent=red] {
     padding: 0; /* remove default heading padding */
 }
 
+.card.setting-card .card-body {
+    padding: 1rem; /* inner padding for card content area */
+}
+
 /* ############################## */
-/* individual setting rows */
+/* ini settings */
 /* ############################## */
 .setting {
     margin-bottom: 1rem; /* space between each setting row */
@@ -212,10 +219,6 @@ button[data-md-color-accent=red] {
 .setting-group-description {
     margin: 0;  /* remove default paragraph margin */
     padding: 0; /* remove default paragraph padding */
-}
-
-.card.setting-card .card-body {
-    padding: 1rem; /* inner padding for card content area */
 }
 
 /* ############################## */
@@ -228,6 +231,10 @@ button[data-md-color-accent=red] {
 .setting-chooser .name-cont {
     display: flex;
     align-items: center; /* vertically align name and badge */
+}
+
+.setting-chooser .name-cont code {
+    font-size: 20px;
 }
 
 .setting-chooser .name {
@@ -249,10 +256,26 @@ button[data-md-color-accent=red] {
 }
 
 /* ############################## */
+/* setting radio/checkbox labels */
+/* ############################## */
+.setting .col-3 label {
+    cursor: pointer; /* pointer cursor to show label is clickable */
+}
+
+/* ############################## */
 /* collapsible options panel */
 /* ############################## */
 .options {
     overflow: hidden; /* clip content when collapsed */
+}
+
+.options-expander .fa-chevron-down {
+    transition: transform 0.2s ease;
+    display: inline-block; /* transform needs a non-inline-text box */
+}
+
+.options-expander.active .fa-chevron-down {
+    transform: rotate(180deg);
 }
 
 .options-preface {
@@ -267,6 +290,7 @@ button[data-md-color-accent=red] {
 .options-expander {
     cursor: pointer;                    /* pointer cursor to indicate clickable */
     color: var(--color-brand-primary);  /* brand color for expand/collapse toggle */
+    font-size: var(--text-size);
 }
 
 .options .opt-badge-cont {
@@ -306,13 +330,6 @@ button[data-md-color-accent=red] {
 .badge-dark       { background-color: #212529; }                   /* near-black */
 
 /* ############################## */
-/* setting radio/checkbox labels */
-/* ############################## */
-.setting .col-3 label {
-    cursor: pointer; /* pointer cursor to show label is clickable */
-}
-
-/* ############################## */
 /* form inputs and selects */
 /* ############################## */
 .form-control {
@@ -344,20 +361,12 @@ select.form-control {
 }
 
 .settings-section h2 {
-    font-size: 1.75rem; /* section heading size */
+    font-size: var(--header-size); /* section heading size */
     margin-top: 3rem;   /* generous spacing above each section */
 }
 
 /* ############################## */
-/* BSE dict - preserve whitespace */
-/* ############################## */
-/* Make sure you can see the full BSE dict */
-#python-bse-settings-dictionary .highlight-python pre {
-    white-space: preserve-breaks; /* keep line breaks in long BSE dict code blocks */
-}
-
-/* ############################## */
-/* button component */
+/* comment button */
 /* ############################## */
 .btn {
     padding: 1rem;                          /* generous click target */
@@ -368,6 +377,7 @@ select.form-control {
     color: white;                           /* white label text */
     cursor: pointer;
     transition: 300ms;                      /* smooth hover animation */
+    font-size: var(--text-size);
 }
 
 .btn:hover {
@@ -411,10 +421,6 @@ select.form-control {
 .content:has(.tutorial-card) h1 {
     text-align: center;
     margin-left: 100px; /* offset to visually center heading within padded layout */
-}
-
-.center {
-    text-align: center;
 }
 
 .tutorial-card {

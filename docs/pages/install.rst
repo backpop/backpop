@@ -21,7 +21,7 @@ First, you'll need the ``COSMIC`` population synthesis code, follow these instru
 
 .. raw:: html
 
-     <iframe id="COSMIC-frame" src="https://cosmic-popsynth.github.io/COSMIC/pages/install.html" title="COSMIC install docs" ></iframe> 
+     <iframe id="COSMIC-frame" src="https://cosmic-popsynth.github.io/COSMIC/pages/install.html" width="100%" height="400px" title="COSMIC install docs" ></iframe> 
 
 
 Step 3: Install ``BackPop``!
@@ -32,8 +32,6 @@ Now, ensuring you've got your environment activated (see above), you can install
 .. code-block:: bash
 
     pip install backpop
-
-
 
 And that's it! To confirm that everything has installed correctly you can run the following command to print out the version of ``BackPop`` you have installed:
 
