@@ -10,6 +10,7 @@
 
 import bs4
 import json
+import os
 import pandas as pd
 from backpop import __version__ as backpop_version
 
@@ -320,5 +321,6 @@ for group in settings:
     soup.select_one(".container-fluid").append(new_group)
 
     # write the soup out to an HTML file for this category
+    os.makedirs("_generated", exist_ok=True)
     with open(f"_generated/config_insert_{group['category']}.html", "w") as f:
         f.write(str(soup))

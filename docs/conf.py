@@ -38,7 +38,6 @@ copyright = '{0}, {1}'.format(datetime.datetime.now().year, author)
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    "sphinx_immaterial",
     "sphinx.ext.mathjax",
     "matplotlib.sphinxext.plot_directive",
     "nbsphinx",
