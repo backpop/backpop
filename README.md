@@ -1,4 +1,4 @@
-![](docs/_static/backpop_logo.png)
+![](docs/_static/img/backpop_logo_light.png)
 
 <div align="center">
   <h1>BackPop</h1>
