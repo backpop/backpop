@@ -47,6 +47,7 @@ dependencies = [
     "meson",
     "nautilus-sampler",
     "cosmic-popsynth >= 4.1",
+    "corner"
 ]
 
 # add optional dependencies for docs
