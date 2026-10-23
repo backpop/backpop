@@ -140,9 +140,9 @@ html_favicon = "_static/img/dco_merger.ico"
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 html_css_files = ['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
-                  ("custom_clean.css", {'v': str(int(time.time()))}),
-                  ("bootstrap-grid.min.css", {'v': str(int(time.time()))})]
-html_js_files = ['custom.js']
+                  ("_static/custom_clean.css", {'v': str(int(time.time()))}),
+                  ("_static/bootstrap-grid.min.css", {'v': str(int(time.time()))})]
+html_js_files = ['_static/custom.js']
 templates_path = ['_templates'] 
 
 # autodocs
