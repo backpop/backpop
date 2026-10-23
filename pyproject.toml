@@ -35,7 +35,6 @@ dependencies = [
     "ipython",
     "sphinx_rtd_theme",
     "coverage",
-    "cpp-coveralls",
     "importlib-metadata<5.0",
     "flake8<5",
     "pytest",
@@ -47,6 +46,7 @@ dependencies = [
     "meson",
     "nautilus-sampler",
     "cosmic-popsynth >= 4.1",
+    "corner"
 ]
 
 # add optional dependencies for docs
@@ -60,6 +60,8 @@ docs = [
     "sphinx_togglebutton",
     "sphinx_immaterial",
     "sphinxcontrib.bibtex",
+    "beautifulsoup4",
+    "cpp-coveralls",
 ]
 
 
