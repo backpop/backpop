@@ -65,6 +65,11 @@ intersphinx_mapping = {'python': ('https://docs.python.org/3', None),
 
 bibtex_bibfiles = ['tutorials/refs.bib']
 
+html_css_files = ['https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
+                  ("custom_clean.css", {'v': str(int(time.time()))}),
+                  ("bootstrap-grid.min.css", {'v': str(int(time.time()))})]
+html_js_files = ['custom.js']
+
 # fix numpydoc autosummary
 numpydoc_show_class_members = False
 
